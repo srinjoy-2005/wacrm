@@ -54,6 +54,14 @@ export interface VerifyPhoneNumberArgs {
 export async function verifyPhoneNumber(
   args: VerifyPhoneNumberArgs
 ): Promise<MetaPhoneInfo> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    return {
+      id: args.phoneNumberId,
+      display_phone_number: '+15555555555',
+      verified_name: 'Mock WhatsApp Local',
+      quality_rating: 'GREEN',
+    }
+  }
   const { phoneNumberId, accessToken } = args
   const url = `${META_API_BASE}/${phoneNumberId}?fields=id,display_phone_number,verified_name,quality_rating`
   const response = await fetch(url, {
@@ -123,6 +131,9 @@ export interface RegisterPhoneNumberResult {
 export async function registerPhoneNumber(
   args: RegisterPhoneNumberArgs
 ): Promise<RegisterPhoneNumberResult> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    return { success: true, alreadyRegistered: false }
+  }
   const { phoneNumberId, accessToken, pin } = args
   const url = `${META_API_BASE}/${phoneNumberId}/register`
   const response = await fetch(url, {
@@ -167,6 +178,9 @@ export interface SubscribeWabaToAppArgs {
 export async function subscribeWabaToApp(
   args: SubscribeWabaToAppArgs
 ): Promise<void> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    return
+  }
   const { wabaId, accessToken } = args
   const url = `${META_API_BASE}/${wabaId}/subscribed_apps`
   const response = await fetch(url, {
@@ -199,6 +213,9 @@ export interface SubscribedApp {
 export async function getSubscribedApps(
   args: GetSubscribedAppsArgs
 ): Promise<SubscribedApp[]> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    return [{ whatsapp_business_api_data: { id: args.wabaId, name: 'Mock CRM App' } }]
+  }
   const { wabaId, accessToken } = args
   const url = `${META_API_BASE}/${wabaId}/subscribed_apps`
   const response = await fetch(url, {
@@ -232,6 +249,11 @@ export interface SendTextMessageArgs {
 export async function sendTextMessage(
   args: SendTextMessageArgs
 ): Promise<MetaSendResult> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    const messageId = `mock-wamid-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+    console.log(`[Mock WhatsApp Send] text message to ${args.to}: ${args.text}`)
+    return { messageId }
+  }
   const { phoneNumberId, accessToken, to, text, contextMessageId } = args
   const url = `${META_API_BASE}/${phoneNumberId}/messages`
   const body: Record<string, unknown> = {
@@ -290,6 +312,11 @@ export interface SendMediaMessageArgs {
 export async function sendMediaMessage(
   args: SendMediaMessageArgs,
 ): Promise<MetaSendResult> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    const messageId = `mock-wamid-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+    console.log(`[Mock WhatsApp Send] ${args.kind} message to ${args.to}: ${args.link}`)
+    return { messageId }
+  }
   const { phoneNumberId, accessToken, to, kind, link, caption, filename, contextMessageId } = args
   if (!link) throw new Error('sendMediaMessage requires a link.')
   const url = `${META_API_BASE}/${phoneNumberId}/messages`
@@ -376,6 +403,11 @@ export interface SendTemplateMessageArgs {
 export async function sendTemplateMessage(
   args: SendTemplateMessageArgs
 ): Promise<MetaSendResult> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    const messageId = `mock-wamid-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+    console.log(`[Mock WhatsApp Send] template ${args.templateName} (${args.language}) to ${args.to}`)
+    return { messageId }
+  }
   const {
     phoneNumberId,
     accessToken,
@@ -477,6 +509,9 @@ export interface UploadResumableMediaArgs {
 export async function uploadResumableMedia(
   args: UploadResumableMediaArgs,
 ): Promise<{ handle: string }> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    return { handle: `mock-handle-${Date.now()}-${Math.random().toString(36).substring(2, 9)}` }
+  }
   const { appId, accessToken, fileName, mimeType, bytes } = args
 
   // Step 1 — open an upload session.
@@ -554,6 +589,13 @@ export interface SubmitMessageTemplateResult {
 export async function submitMessageTemplate(
   args: SubmitMessageTemplateArgs
 ): Promise<SubmitMessageTemplateResult> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    return {
+      id: `mock-template-id-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      status: 'APPROVED',
+      category: args.payload.category,
+    }
+  }
   const { wabaId, accessToken, payload } = args
   const url = `${META_API_BASE}/${wabaId}/message_templates`
   const response = await fetch(url, {
@@ -605,6 +647,9 @@ export interface EditMessageTemplateResult {
 export async function editMessageTemplate(
   args: EditMessageTemplateArgs
 ): Promise<EditMessageTemplateResult> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    return { success: true }
+  }
   const { metaTemplateId, accessToken, components, category } = args
   const body: Record<string, unknown> = { components }
   if (category) body.category = category
@@ -643,6 +688,9 @@ export interface DeleteMessageTemplateArgs {
 export async function deleteMessageTemplate(
   args: DeleteMessageTemplateArgs
 ): Promise<void> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    return
+  }
   const { wabaId, accessToken, name, metaTemplateId } = args
   const params = new URLSearchParams({ name })
   if (metaTemplateId) params.set('hsm_id', metaTemplateId)
@@ -680,6 +728,11 @@ export interface SendReactionMessageArgs {
 export async function sendReactionMessage(
   args: SendReactionMessageArgs
 ): Promise<MetaSendResult> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    const messageId = `mock-wamid-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+    console.log(`[Mock WhatsApp Send] reaction ${args.emoji} on ${args.targetMessageId} to ${args.to}`)
+    return { messageId }
+  }
   const { phoneNumberId, accessToken, to, targetMessageId, emoji } = args
   const url = `${META_API_BASE}/${phoneNumberId}/messages`
   const response = await fetch(url, {
@@ -766,6 +819,11 @@ export interface SendInteractiveButtonsArgs {
 export async function sendInteractiveButtons(
   args: SendInteractiveButtonsArgs
 ): Promise<MetaSendResult> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    const messageId = `mock-wamid-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+    console.log(`[Mock WhatsApp Send] interactive buttons to ${args.to}:`, args.buttons)
+    return { messageId }
+  }
   const {
     phoneNumberId, accessToken, to,
     bodyText, headerText, footerText, buttons, contextMessageId,
@@ -866,6 +924,11 @@ export interface SendInteractiveListArgs {
 export async function sendInteractiveList(
   args: SendInteractiveListArgs
 ): Promise<MetaSendResult> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    const messageId = `mock-wamid-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+    console.log(`[Mock WhatsApp Send] interactive list to ${args.to}:`, args.sections)
+    return { messageId }
+  }
   const {
     phoneNumberId, accessToken, to,
     bodyText, buttonLabel, headerText, footerText, sections, contextMessageId,
@@ -998,6 +1061,9 @@ export interface GetMediaUrlArgs {
 export async function getMediaUrl(
   args: GetMediaUrlArgs
 ): Promise<{ url: string; mimeType: string }> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    return { url: `https://example.com/mock-media-${args.mediaId}`, mimeType: 'image/png' }
+  }
   const { mediaId, accessToken } = args
   const response = await fetch(`${META_API_BASE}/${mediaId}`, {
     headers: { Authorization: `Bearer ${accessToken}` },
@@ -1022,6 +1088,9 @@ export interface DownloadMediaArgs {
 export async function downloadMedia(
   args: DownloadMediaArgs
 ): Promise<{ buffer: Buffer; contentType: string }> {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    return { buffer: Buffer.from([]), contentType: 'image/png' }
+  }
   const { downloadUrl, accessToken } = args
   const response = await fetch(downloadUrl, {
     headers: { Authorization: `Bearer ${accessToken}` },

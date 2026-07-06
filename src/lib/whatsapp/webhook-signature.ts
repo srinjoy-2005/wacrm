@@ -22,6 +22,9 @@ export function verifyMetaWebhookSignature(
   rawBody: string,
   signatureHeader: string | null,
 ): boolean {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    return true
+  }
   const secret = process.env.META_APP_SECRET
   if (!secret) {
     console.error(

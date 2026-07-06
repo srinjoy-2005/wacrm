@@ -28,6 +28,7 @@ interface OverviewCounts {
 interface WhatsAppStatus {
   configured: boolean;
   connected: boolean;
+  isMock?: boolean;
 }
 
 export function SettingsOverview({
@@ -128,6 +129,7 @@ export function SettingsOverview({
       setWhatsapp({
         configured: row.status === 'fulfilled' && !!row.value.data?.phone_number_id,
         connected: health.status === 'fulfilled' && !!health.value?.connected,
+        isMock: health.status === 'fulfilled' && !!health.value?.is_mock,
       });
       setWhatsappLoading(false);
     })();
@@ -161,7 +163,7 @@ export function SettingsOverview({
         'Not set up yet'
       ) : whatsapp.connected ? (
         <>
-          <StatusDot tone="ok" /> Connected
+          <StatusDot tone="ok" /> {whatsapp.isMock ? 'Connected (Simulator)' : 'Connected'}
         </>
       ) : (
         <>

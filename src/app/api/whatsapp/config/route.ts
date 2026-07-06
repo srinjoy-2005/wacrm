@@ -100,6 +100,17 @@ export async function GET() {
     }
 
     if (!config) {
+      if (process.env.MOCK_WHATSAPP === 'true') {
+        return NextResponse.json(
+          {
+            connected: false,
+            reason: 'no_config',
+            is_mock: true,
+            message: 'WhatsApp Simulator Mode is enabled. Enter any phone number ID (e.g. "12345") and access token to get started.',
+          },
+          { status: 200 }
+        )
+      }
       return NextResponse.json(
         {
           connected: false,
@@ -135,7 +146,11 @@ export async function GET() {
         phoneNumberId: config.phone_number_id,
         accessToken,
       })
-      return NextResponse.json({ connected: true, phone_info: phoneInfo })
+      return NextResponse.json({
+        connected: true,
+        phone_info: phoneInfo,
+        is_mock: process.env.MOCK_WHATSAPP === 'true',
+      })
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown Meta API error'
       console.error('[whatsapp/config GET] Meta API verification failed:', message)

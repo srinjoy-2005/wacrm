@@ -140,7 +140,8 @@ export async function POST(request: Request) {
 
     const dryRun =
       process.env.WHATSAPP_TEMPLATES_DRY_RUN === 'true' ||
-      process.env.WHATSAPP_TEMPLATES_DRY_RUN === '1'
+      process.env.WHATSAPP_TEMPLATES_DRY_RUN === '1' ||
+      process.env.MOCK_WHATSAPP === 'true'
 
     let metaTemplateId: string
     let metaStatus: string

@@ -53,6 +53,7 @@ export function WhatsAppConfig() {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('unknown');
   const [resetReason, setResetReason] = useState<ResetReason>(null);
   const [statusMessage, setStatusMessage] = useState<string>('');
+  const [isMock, setIsMock] = useState(false);
   // Guards against re-hydrating the form when the load effect below
   // re-runs for reasons unrelated to actually switching accounts —
   // e.g. Supabase's onAuthStateChange fires a token refresh (new
@@ -132,28 +133,23 @@ export function WhatsAppConfig() {
       setRegistrationProbe(null);
 
       // Then verify health via the API (decrypts token + pings Meta)
-      if (data) {
-        try {
-          const res = await fetch('/api/whatsapp/config', { method: 'GET' });
-          const payload = await res.json();
+      try {
+        const res = await fetch('/api/whatsapp/config', { method: 'GET' });
+        const payload = await res.json();
+        setIsMock(!!payload.is_mock);
 
-          if (payload.connected) {
-            setConnectionStatus('connected');
-            setResetReason(null);
-            setStatusMessage('');
-          } else {
-            setConnectionStatus('disconnected');
-            setResetReason(payload.needs_reset ? 'token_corrupted' : payload.reason === 'meta_api_error' ? 'meta_api_error' : null);
-            setStatusMessage(payload.message || '');
-          }
-        } catch (err) {
-          console.error('Health check failed:', err);
+        if (payload.connected) {
+          setConnectionStatus('connected');
+          setResetReason(null);
+          setStatusMessage('');
+        } else {
           setConnectionStatus('disconnected');
+          setResetReason(payload.needs_reset ? 'token_corrupted' : payload.reason === 'meta_api_error' ? 'meta_api_error' : null);
+          setStatusMessage(payload.message || '');
         }
-      } else {
+      } catch (err) {
+        console.error('Health check failed:', err);
         setConnectionStatus('disconnected');
-        setResetReason(null);
-        setStatusMessage('');
       }
     } catch (err) {
       console.error('fetchConfig error:', err);
@@ -280,15 +276,18 @@ export function WhatsAppConfig() {
       setTesting(true);
       const res = await fetch('/api/whatsapp/config', { method: 'GET' });
       const payload = await res.json();
+      setIsMock(!!payload.is_mock);
 
       if (payload.connected) {
         setConnectionStatus('connected');
         setResetReason(null);
         setStatusMessage('');
         toast.success(
-          payload.phone_info?.verified_name
-            ? `Connected to ${payload.phone_info.verified_name}`
-            : 'API connection successful'
+          payload.is_mock
+            ? 'API connection simulated successfully'
+            : payload.phone_info?.verified_name
+              ? `Connected to ${payload.phone_info.verified_name}`
+              : 'API connection successful'
         );
       } else {
         setConnectionStatus('disconnected');
@@ -356,6 +355,7 @@ export function WhatsAppConfig() {
       setConnectionStatus('disconnected');
       setResetReason(null);
       setStatusMessage('');
+      setIsMock(false);
     } catch (err) {
       console.error('Reset error:', err);
       toast.error('Failed to reset configuration');
@@ -394,6 +394,23 @@ export function WhatsAppConfig() {
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
       {/* Main config form */}
       <div className="space-y-6">
+        {/* Mock WhatsApp Simulator Mode Active Banner */}
+        {isMock && (
+          <Alert className="bg-primary-soft border-primary/20 text-primary">
+            <div className="flex items-start gap-3">
+              <Zap className="size-5 text-primary mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <AlertTitle className="text-primary font-bold">
+                  WhatsApp Simulator Mode Active
+                </AlertTitle>
+                <AlertDescription className="text-primary/80 text-sm leading-relaxed">
+                  You are running without real Meta API credentials. You can enter any mock values below (e.g. phone number ID and verify token) and click **Save Configuration** to connect. Use the **WhatsApp Simulator** tab in the sidebar to simulate incoming messages and test your CRM features locally.
+                </AlertDescription>
+              </div>
+            </div>
+          </Alert>
+        )}
+
         {/* Corrupted-token reset banner */}
         {showResetBanner && (
           <Alert className="bg-amber-950/40 border-amber-600/40">
@@ -438,12 +455,18 @@ export function WhatsAppConfig() {
               <XCircle className="size-4 text-red-500" />
             )}
             <AlertTitle className="text-foreground mb-0">
-              {connectionStatus === 'connected' ? 'Credentials valid' : 'Not Connected'}
+              {connectionStatus === 'connected'
+                ? isMock
+                  ? 'Credentials valid (Simulator)'
+                  : 'Credentials valid'
+                : 'Not Connected'}
             </AlertTitle>
           </div>
           <AlertDescription className="text-muted-foreground">
             {connectionStatus === 'connected'
-              ? 'Your access token authenticates with Meta. See Registration status below for whether webhooks are actually wired.'
+              ? isMock
+                ? 'Your simulated connection is active. You are ready to run tests locally.'
+                : 'Your access token authenticates with Meta. See Registration status below for whether webhooks are actually wired.'
               : statusMessage ||
                 'Configure your Meta API credentials below to connect your WhatsApp Business account.'}
           </AlertDescription>

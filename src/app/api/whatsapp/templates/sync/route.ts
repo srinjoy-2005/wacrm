@@ -178,10 +178,72 @@ export async function POST() {
 
     const accessToken = decrypt(config.access_token)
 
-    const metaTemplates: MetaTemplate[] = []
-    let nextUrl:
-      | string
-      | null = `${META_API_BASE}/${config.waba_id}/message_templates?limit=100&fields=id,name,language,status,category,components,quality_score`
+    let metaTemplates: MetaTemplate[] = []
+    let nextUrl: string | null = null
+
+    if (process.env.MOCK_WHATSAPP === 'true') {
+      metaTemplates = [
+        {
+          id: 'mock-template-welcome',
+          name: 'welcome_message',
+          language: 'en_US',
+          status: 'APPROVED',
+          category: 'MARKETING',
+          components: [
+            {
+              type: 'BODY',
+              text: 'Welcome to our service, {{1}}! We are excited to have you.',
+              example: {
+                body_text: [['John Doe']]
+              }
+            }
+          ],
+          quality_score: { score: 'GREEN' }
+        },
+        {
+          id: 'mock-template-promo',
+          name: 'special_promotion',
+          language: 'en_US',
+          status: 'APPROVED',
+          category: 'MARKETING',
+          components: [
+            {
+              type: 'HEADER',
+              format: 'TEXT',
+              text: 'Exclusive Offer!'
+            },
+            {
+              type: 'BODY',
+              text: 'Get {{1}}% off your next purchase using code {{2}}.',
+              example: {
+                body_text: [['20', 'PROMO20']]
+              }
+            },
+            {
+              type: 'FOOTER',
+              text: 'Terms apply. Valid until end of month.'
+            },
+            {
+              type: 'BUTTONS',
+              buttons: [
+                {
+                  type: 'URL',
+                  text: 'Shop Now',
+                  url: 'https://example.com/shop'
+                },
+                {
+                  type: 'QUICK_REPLY',
+                  text: 'Opt out'
+                }
+              ]
+            }
+          ],
+          quality_score: { score: 'GREEN' }
+        }
+      ]
+    } else {
+      nextUrl = `${META_API_BASE}/${config.waba_id}/message_templates?limit=100&fields=id,name,language,status,category,components,quality_score`
+    }
     const PAGE_CAP = 20
     let pageCount = 0
 
