@@ -185,7 +185,7 @@ export async function OPTIONS() {
 
 // POST - Receive messages
 export async function POST(request: Request) {
-  const corsHeaders = process.env.MOCK_WHATSAPP === 'true' ? {
+  const corsHeaders: Record<string, string> = process.env.MOCK_WHATSAPP === 'true' ? {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, x-hub-signature-256',

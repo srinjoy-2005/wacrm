@@ -357,52 +357,6 @@ export default function App() {
     setSendingMessage(false)
   };
 
-  const triggerMockTemplate = async (templateName: string) => {
-    if (!selectedContact) return
-
-    // Simulates receiving a template (outbound trigger mock)
-    const payload = {
-      object: 'whatsapp_business_account',
-      entry: [
-        {
-          id: '12345',
-          changes: [
-            {
-              value: {
-                messaging_product: 'whatsapp',
-                metadata: {
-                  display_phone_number: '15555555555',
-                  phone_number_id: '12345'
-                },
-                contacts: [
-                  {
-                    profile: { name: selectedContact.name },
-                    wa_id: selectedContact.phone.replace('+', '')
-                  }
-                ],
-                messages: [
-                  {
-                    from: selectedContact.phone.replace('+', ''),
-                    id: `wamid.SimulatedTemplate_${Math.random().toString(36).substring(2, 15)}`,
-                    timestamp: Math.floor(Date.now() / 1000).toString(),
-                    type: 'template',
-                    template: {
-                      name: templateName,
-                      language: { code: 'en' },
-                      components: []
-                    }
-                  }
-                ]
-              },
-              field: 'messages'
-            }
-          ]
-        }
-      ]
-    }
-
-    await sendMockWebhook('template', payload)
-  };
 
   const triggerButtonReply = async (buttonId: string, buttonText: string) => {
     if (!selectedContact) return
@@ -618,29 +572,6 @@ export default function App() {
                 ))
               )}
             </div>
-
-            {/* Template Triggers Section */}
-            {selectedContact && (
-              <div className="p-4 border-t border-zinc-800 bg-zinc-950/20 space-y-2">
-                <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">
-                  Trigger Mock Templates
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => triggerMockTemplate('welcome_message')}
-                    className="p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg border border-zinc-700/60 text-[11px] font-semibold text-zinc-300 transition-colors text-center truncate"
-                  >
-                    Welcome Template
-                  </button>
-                  <button
-                    onClick={() => triggerMockTemplate('special_promotion')}
-                    className="p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg border border-zinc-700/60 text-[11px] font-semibold text-zinc-300 transition-colors text-center truncate"
-                  >
-                    Promo Template
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         )}
       </div>
@@ -676,7 +607,7 @@ export default function App() {
 
             {/* Messages Area */}
             <div 
-              className="flex-1 overflow-y-auto p-4 space-y-2.5 z-30" 
+              className="flex-1 overflow-y-auto p-4 space-y-2.5 z-30 flex flex-col" 
               style={{
                 backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")',
                 backgroundSize: 'contain',
