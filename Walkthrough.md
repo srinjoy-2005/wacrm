@@ -39,54 +39,43 @@ To run wacrm locally and test its inbox, automations, pipelines, and template fl
    META_APP_SECRET=mock-secret
    ```
 
-5. **Start Dev Server**:
+5. **Start Both Dev Servers**:
+   Run the concurrent dev command to spin up WACRM (port 3000) and the Teacher Simulator (port 3001) in parallel:
    ```bash
    npm install
-   npm run dev
+   npm run dev:all
    ```
 
 ---
 
 ## 🧪 Testing the Simulator
 
-### 1. Connecting a Mock WhatsApp Account
-1. Open [http://localhost:3000](http://localhost:3000) and sign in/up.
-2. Go to **Settings → WhatsApp**.
-3. You will see a banner: `WhatsApp Simulator Mode Active`.
-4. Enter any mock values:
-   - **Phone Number ID**: e.g., `12345`
-   - **WhatsApp Business Account ID**: e.g., `12345`
-   - **Permanent Access Token**: e.g., `mock-token`
-   - **Webhook Verify Token**: e.g., `my-token`
-5. Click **Save Configuration**.
-6. The status will update to **Credentials valid (Simulator)**.
+You have two choices for simulating user actions: the integrated settings page dashboard or the new standalone mobile simulator.
 
-### 2. Loading Mock Message Templates
+### A. Using the Standalone User Simulator (Port 3001)
+The standalone React/Vite application simulates a WhatsApp mobile chat screen representing the customer's phone:
+1. Open **[http://localhost:3001](http://localhost:3001)**.
+2. **Authenticate**: Log in using your Supabase account credentials (the same email/password you used to sign up on WACRM) to authorize the database connection.
+3. **Select/Create Profile**: In the left sidebar, select a contact profile (e.g. `Alice Miller`) or click `+` to register a new one.
+4. **Chat**:
+   - Type a message in the text box inside the simulated phone mockup and click **Send**. The message will post to the webhook and appear in WACRM's Inbox on port 3000.
+   - Reply to the customer from the WACRM inbox. The reply will pop up instantly on the simulated phone screen on port 3001 via Supabase Realtime!
+   - Tap interactive reply buttons under incoming messages to simulate button replies.
+5. **Logs Inspector**: Inspect raw JSON payloads being dispatched and their response codes in the right-hand **Event Logs** sidebar.
+
+### B. Using the Integrated Settings Panel (Port 3000)
 1. Go to **Settings → WhatsApp Simulator**.
-2. Click **Sync Mock Templates**.
-3. Go to **Settings → Templates**. You will see two mock templates synced: `welcome_message` and `special_promotion`.
-
-### 3. Simulating Inbound Customer Messages
-1. Go to **Settings → WhatsApp Simulator**.
-2. Choose **+ Create New Simulated Customer** under **Sender (Customer)**.
-3. Fill in:
-   - **Customer Name**: e.g., `Alice Miller`
-   - **Phone Number**: e.g., `+12025550143`
-4. Type a message body (e.g., `Hi, I am interested in your software!`) and click **Trigger Inbound Message**.
-5. Go to the **Shared Inbox** page. You will see `Alice Miller`'s conversation is open, and her incoming message has arrived in real-time!
-
-### 4. Replying & Simulating Delivery Statuses
-1. Reply to Alice from the wacrm Inbox text composer (e.g., `Hi Alice, let me know how I can help!`).
-2. Go to **Settings → WhatsApp Simulator**.
-3. Under **Simulate Status Update**, you will see your reply message.
-4. Select **read** or **delivered** status, and click **Simulate Status Transition**.
-5. Back in the Inbox, you will see the checkmarks on your reply change to double blue (read status), showing real-time feedback.
+2. **Sync Templates**: Click **Sync Mock Templates** to load templates into the database.
+3. **Simulate Inbound**: Choose a simulated customer, type a text body, and click **Trigger Inbound Message**.
+4. **Simulate Status Updates**: Select any sent agent reply, choose a status (`delivered`, `read`), and click **Simulate Status Transition**.
 
 ---
 
 ## 📂 Code Modifications Summary
 
 - **Webhook Signature Bypass** ([webhook-signature.ts](file:///home/iamsrinjoy/important-stuff/wacrm/src/lib/whatsapp/webhook-signature.ts)): Bypasses HMAC-SHA256 signature verification if `MOCK_WHATSAPP=true` is set.
+- **Webhook CORS & OPTIONS Handler** ([route.ts (webhook)](file:///home/iamsrinjoy/important-stuff/wacrm/src/app/api/whatsapp/webhook/route.ts)): Added OPTIONS method handler and POST CORS response headers to support cross-origin webhook calls from the port 3001 simulator.
 - **Mock Meta API Calls** ([meta-api.ts](file:///home/iamsrinjoy/important-stuff/wacrm/src/lib/whatsapp/meta-api.ts)): Intercepts all outgoing calls to Graph API (send, registration, media download, template submit) and returns synthetic mock values.
 - **Sync Mock Templates** ([sync/route.ts](file:///home/iamsrinjoy/important-stuff/wacrm/src/app/api/whatsapp/templates/sync/route.ts)): Generates and syncs mock template database rows locally instead of calling Meta.
-- **Developer Simulator Component** ([developer-simulator.tsx](file:///home/iamsrinjoy/important-stuff/wacrm/src/components/settings/developer-simulator.tsx)): The dashboard UI control board for triggering webhook simulation.
+- **Developer Simulator Component** ([developer-simulator.tsx](file:///home/iamsrinjoy/important-stuff/wacrm/src/components/settings/developer-simulator.tsx)): The dashboard UI control board inside settings.
+- **Standalone WhatsApp Simulator** ([App.tsx](file:///home/iamsrinjoy/important-stuff/wacrm/teacher-simulator/src/App.tsx)): Standalone mobile sandbox running on port 3001.

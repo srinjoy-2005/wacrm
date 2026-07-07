@@ -168,8 +168,29 @@ export async function GET(request: Request) {
   }
 }
 
+// OPTIONS - CORS preflight for mock simulator
+export async function OPTIONS() {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, x-hub-signature-256',
+      },
+    })
+  }
+  return new Response(null, { status: 405 })
+}
+
 // POST - Receive messages
 export async function POST(request: Request) {
+  const corsHeaders = process.env.MOCK_WHATSAPP === 'true' ? {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, x-hub-signature-256',
+  } : {}
+
   // Read raw body first so we can HMAC-verify the exact bytes Meta
   // signed. request.json() would re-encode and break the signature.
   const rawBody = await request.text()
@@ -180,14 +201,14 @@ export async function POST(request: Request) {
     // loudly if a misconfiguration causes signatures to stop matching,
     // rather than silently eating events.
     console.warn('[webhook] rejected request with invalid signature')
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401, headers: corsHeaders })
   }
 
   let body: { entry?: WhatsAppWebhookEntry[] }
   try {
     body = JSON.parse(rawBody)
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400, headers: corsHeaders })
   }
 
   // Process AFTER the response so we ack Meta within their ~20s timeout
@@ -212,7 +233,7 @@ export async function POST(request: Request) {
     }
   })
 
-  return NextResponse.json({ status: 'received' }, { status: 200 })
+  return NextResponse.json({ status: 'received' }, { status: 200, headers: corsHeaders })
 }
 
 async function processWebhook(body: { entry?: WhatsAppWebhookEntry[] }) {
