@@ -55,6 +55,35 @@ Instead of simple HTTP polling, the simulator establishes a direct WebSocket con
 *   When a staff user sends a reply from WACRM (port 3000), Supabase publishes the insert event. The simulator (port 3001) catches it and pushes the chat bubble onto the UI in real-time.
 *   It also subscribes to UPDATE events on `messages` to dynamically update message delivery checkmarks (sent, delivered, read) inside the phone mockup.
 
+Viewed tsconfig.json:18-35
+Ran command: `git status`
+Ran command: `git commit`
+Ran command: `git commit -m "fixed mocker ui, still got problem with message sending, messages sent dont show up, anther problem with invalid phone number in wacrm needs to fixed by removing any check for invalid phone number during mock stage"`
+Ran command: `git push`
+Ran command: `npm run dev:all`
+
+The `teacher-simulator` **is actually given the Supabase API keys automatically!** It reads them directly from the main project's `.env.local` file.
+
+Here is how the magic works behind the scenes in the configuration we set up:
+
+### 1. The Vite Configuration (`vite.config.ts`)
+In [vite.config.ts](file:///home/iamsrinjoy/important-stuff/wacrm/teacher-simulator/vite.config.ts), we added two key settings:
+```typescript
+  envDir: '../',
+  envPrefix: 'NEXT_PUBLIC_',
+```
+*   `envDir: '../'`: Tells Vite that the environment variables file (`.env.local`) is located one level up in the parent directory (the root project folder).
+*   `envPrefix: 'NEXT_PUBLIC_'`: Tells Vite that it is allowed to expose any environment variables starting with `NEXT_PUBLIC_` to the frontend bundle. (Normally, Vite restricts access to variables that do not start with `VITE_`).
+
+### 2. The Supabase Client (`src/lib/supabase.ts`)
+In [supabase.ts](file:///home/iamsrinjoy/important-stuff/wacrm/teacher-simulator/src/lib/supabase.ts), the Supabase client loads these shared variables directly using Vite's environment metadata:
+```typescript
+const supabaseUrl = import.meta.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+```
+
+So the simulator inherits your credentials dynamically from the parent project. You don't have to duplicate, copy/paste, or maintain a separate `.env` file inside the simulator folder!
+
 ---
 
 ## 3. Setup and Execution

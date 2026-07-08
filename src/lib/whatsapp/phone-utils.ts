@@ -37,6 +37,9 @@ export function phonesMatch(phone1: string, phone2: string): boolean {
  * Accepts with or without + prefix.
  */
 export function isValidE164(phone: string): boolean {
+  if (process.env.MOCK_WHATSAPP === 'true') {
+    return true
+  }
   return /^\+?[1-9]\d{6,14}$/.test(phone)
 }
 
