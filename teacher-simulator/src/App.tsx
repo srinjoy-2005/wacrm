@@ -53,6 +53,7 @@ export default function App() {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
+  const [accountId, setAccountId] = useState<string | null>(null)
 
   // Input fields
   const [inputText, setInputText] = useState('')
@@ -87,11 +88,13 @@ export default function App() {
   useEffect(() => {
     if (session) {
       loadContacts()
+      loadUserProfile()
     } else {
       setContacts([])
       setSelectedContact(null)
       setConversationId(null)
       setMessages([])
+      setAccountId(null)
     }
   }, [session])
 
@@ -184,7 +187,23 @@ export default function App() {
       console.error('Error loading contacts:', err)
     }
   };
+  const loadUserProfile = async () => {
+    if (!session?.user?.id) return
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('account_id')
+        .eq('user_id', session.user.id)
+        .single()
 
+      if (error) throw error
+      if (data) {
+        setAccountId(data.account_id)
+      }
+    } catch (err) {
+      console.error('Error loading user profile:', err)
+    }
+  };
 
   const loadConversation = async (contact: Contact) => {
     try {
@@ -242,7 +261,9 @@ export default function App() {
         .from('contacts')
         .insert([{
           name: newContactName,
-          phone: cleanPhone
+          phone: cleanPhone,
+          user_id: session.user.id,
+          account_id: accountId
         }])
         .select()
         .single()
