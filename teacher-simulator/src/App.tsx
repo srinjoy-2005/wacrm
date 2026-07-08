@@ -54,8 +54,6 @@ export default function App() {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
-  const [phoneNumberId, setPhoneNumberId] = useState(' ')
-  const [wabaId, setWabaId] = useState(' ')
 
   // Input fields
   const [inputText, setInputText] = useState('')
@@ -102,7 +100,6 @@ export default function App() {
   useEffect(() => {
     if (selectedContact) {
       loadConversation(selectedContact)
-      loadPhoneConfig(selectedContact)
     }
   }, [selectedContact])
 
@@ -189,24 +186,6 @@ export default function App() {
     }
   };
 
-  const loadPhoneConfig = async (contact: Contact | null) => {
-    if (!contact || !contact.account_id) return
-    try {
-      const { data, error } = await supabase
-        .from('whatsapp_config')
-        .select('phone_number_id, waba_id')
-        .eq('account_id', contact.account_id)
-        .limit(1)
-
-      if (error) throw error
-      if (data && data.length > 0) {
-        setPhoneNumberId(data[0].phone_number_id || ' ')
-        setWabaId(data[0].waba_id || ' ')
-      }
-    } catch (err) {
-      console.error('Error loading whatsapp config:', err)
-    }
-  };
 
   const loadConversation = async (contact: Contact) => {
     try {
@@ -340,14 +319,14 @@ export default function App() {
       object: 'whatsapp_business_account',
       entry: [
         {
-          id: wabaId,
+          id: '12345',
           changes: [
             {
               value: {
                 messaging_product: 'whatsapp',
                 metadata: {
                   display_phone_number: '15555555555',
-                  phone_number_id: phoneNumberId
+                  phone_number_id: '12345'
                 },
                 contacts: [
                   {
@@ -388,14 +367,14 @@ export default function App() {
       object: 'whatsapp_business_account',
       entry: [
         {
-          id: wabaId,
+          id: '12345',
           changes: [
             {
               value: {
                 messaging_product: 'whatsapp',
                 metadata: {
                   display_phone_number: '15555555555',
-                  phone_number_id: phoneNumberId
+                  phone_number_id: '12345'
                 },
                 contacts: [
                   {
@@ -593,33 +572,6 @@ export default function App() {
                   </button>
                 ))
               )}
-            </div>
-
-            {/* Phone Configuration (Developer Settings) */}
-            <div className="p-4 border-t border-zinc-800 bg-zinc-950/40 space-y-3 shrink-0">
-              <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
-                ⚙️ Simulator Settings
-              </div>
-              <div className="space-y-2">
-                <div>
-                  <label className="block text-[9px] text-zinc-500 font-medium mb-1">Phone Number ID</label>
-                  <input
-                    type="text"
-                    value={phoneNumberId}
-                    onChange={(e) => setPhoneNumberId(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-700/60 rounded px-2 py-1 text-xs text-zinc-200 focus:outline-none focus:border-emerald-500/50"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[9px] text-zinc-500 font-medium mb-1">WABA ID</label>
-                  <input
-                    type="text"
-                    value={wabaId}
-                    onChange={(e) => setWabaId(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-700/60 rounded px-2 py-1 text-xs text-zinc-200 focus:outline-none focus:border-emerald-500/50"
-                  />
-                </div>
-              </div>
             </div>
           </div>
         )}

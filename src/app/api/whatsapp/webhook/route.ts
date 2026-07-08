@@ -273,10 +273,24 @@ async function processWebhook(body: { entry?: WhatsAppWebhookEntry[] }) {
       // operators see the real cause in logs. ≥2 rows shouldn't happen
       // post-migration 013 (UNIQUE constraint), but a row created
       // before the constraint, or a race, would still surface here.
-      const { data: configRows, error: configError } = await supabaseAdmin()
-        .from('whatsapp_config')
-        .select('*')
-        .eq('phone_number_id', phoneNumberId)
+      let configRows: any[] | null = null
+      let configError: any = null
+
+      if (process.env.MOCK_WHATSAPP === 'true') {
+        const { data, error } = await supabaseAdmin()
+          .from('whatsapp_config')
+          .select('*')
+          .limit(1)
+        configRows = data
+        configError = error
+      } else {
+        const { data, error } = await supabaseAdmin()
+          .from('whatsapp_config')
+          .select('*')
+          .eq('phone_number_id', phoneNumberId)
+        configRows = data
+        configError = error
+      }
 
       if (configError) {
         console.error(
