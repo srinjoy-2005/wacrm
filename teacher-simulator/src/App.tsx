@@ -20,7 +20,6 @@ interface Contact {
   id: string
   name: string
   phone: string
-  preferred_language: string
   account_id?: string
 }
 
@@ -243,8 +242,7 @@ export default function App() {
         .from('contacts')
         .insert([{
           name: newContactName,
-          phone: cleanPhone,
-          preferred_language: 'en'
+          phone: cleanPhone
         }])
         .select()
         .single()
