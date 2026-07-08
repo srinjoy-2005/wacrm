@@ -21,6 +21,7 @@ interface Contact {
   name: string
   phone: string
   preferred_language: string
+  account_id?: string
 }
 
 interface Message {
@@ -89,7 +90,6 @@ export default function App() {
   useEffect(() => {
     if (session) {
       loadContacts()
-      loadPhoneConfig()
     } else {
       setContacts([])
       setSelectedContact(null)
@@ -102,6 +102,7 @@ export default function App() {
   useEffect(() => {
     if (selectedContact) {
       loadConversation(selectedContact)
+      loadPhoneConfig(selectedContact)
     }
   }, [selectedContact])
 
@@ -188,11 +189,13 @@ export default function App() {
     }
   };
 
-  const loadPhoneConfig = async () => {
+  const loadPhoneConfig = async (contact: Contact | null) => {
+    if (!contact || !contact.account_id) return
     try {
       const { data, error } = await supabase
         .from('whatsapp_config')
         .select('phone_number_id, waba_id')
+        .eq('account_id', contact.account_id)
         .limit(1)
 
       if (error) throw error
