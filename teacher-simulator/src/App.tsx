@@ -220,7 +220,12 @@ export default function App() {
         // Create a conversation if one doesn't exist
         const { data: newConv, error: createError } = await supabase
           .from('conversations')
-          .insert([{ contact_id: contact.id, status: 'open' }])
+          .insert([{ 
+            contact_id: contact.id, 
+            status: 'open',
+            user_id: session.user.id,
+            account_id: contact.account_id
+          }])
           .select()
           .single()
 
