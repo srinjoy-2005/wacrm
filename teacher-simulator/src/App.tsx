@@ -54,9 +54,9 @@ export default function App() {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
-  const [phoneNumberId, setPhoneNumberId] = useState('12345')
-  const [wabaId, setWabaId] = useState('12345')
-  
+  const [phoneNumberId, setPhoneNumberId] = useState(' ')
+  const [wabaId, setWabaId] = useState(' ')
+
   // Input fields
   const [inputText, setInputText] = useState('')
   const [newContactName, setNewContactName] = useState('')
@@ -200,8 +200,8 @@ export default function App() {
 
       if (error) throw error
       if (data && data.length > 0) {
-        setPhoneNumberId(data[0].phone_number_id || '12345')
-        setWabaId(data[0].waba_id || '12345')
+        setPhoneNumberId(data[0].phone_number_id || ' ')
+        setWabaId(data[0].waba_id || ' ')
       }
     } catch (err) {
       console.error('Error loading whatsapp config:', err)
@@ -437,10 +437,10 @@ export default function App() {
 
   return (
     <div className="h-screen w-screen bg-zinc-950 text-zinc-100 flex overflow-hidden font-sans">
-      
+
       {/* 1. Left Panel (Identities / Accounts / Actions) */}
       <div className="w-[360px] border-r border-zinc-800 bg-zinc-900 flex flex-col shrink-0">
-        
+
         {/* Header / Auth */}
         <div className="p-4 border-b border-zinc-800 bg-zinc-900/60 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -507,7 +507,7 @@ export default function App() {
         ) : (
           /* Main Contacts Sidebar */
           <div className="flex-1 flex flex-col overflow-hidden">
-            
+
             {/* Create Contact Section */}
             {isCreatingContact ? (
               <form onSubmit={handleCreateContact} className="p-4 border-b border-zinc-800 bg-zinc-950/40 space-y-3">
@@ -578,11 +578,10 @@ export default function App() {
                   <button
                     key={contact.id}
                     onClick={() => setSelectedContact(contact)}
-                    className={`w-full text-left p-2.5 rounded-lg flex items-center justify-between transition-colors ${
-                      selectedContact?.id === contact.id
+                    className={`w-full text-left p-2.5 rounded-lg flex items-center justify-between transition-colors ${selectedContact?.id === contact.id
                         ? 'bg-emerald-600/10 border border-emerald-500/20 text-emerald-400'
                         : 'hover:bg-zinc-800 border border-transparent text-zinc-300'
-                    }`}
+                      }`}
                   >
                     <div className="truncate">
                       <div className="font-semibold text-xs truncate">{contact.name}</div>
@@ -656,8 +655,8 @@ export default function App() {
             </div>
 
             {/* Messages Area */}
-            <div 
-              className="flex-1 overflow-y-auto p-4 space-y-2.5 z-30 flex flex-col" 
+            <div
+              className="flex-1 overflow-y-auto p-4 space-y-2.5 z-30 flex flex-col"
               style={{
                 backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")',
                 backgroundSize: 'contain',
@@ -676,11 +675,10 @@ export default function App() {
                   return (
                     <div
                       key={message.id}
-                      className={`flex flex-col max-w-[80%] rounded-lg px-2.5 py-1.5 text-xs shadow-sm relative ${
-                        isIncoming
+                      className={`flex flex-col max-w-[80%] rounded-lg px-2.5 py-1.5 text-xs shadow-sm relative ${isIncoming
                           ? 'bg-white text-zinc-800 self-start rounded-tl-none'
                           : 'bg-[#d9fdd3] text-zinc-900 self-end rounded-tr-none'
-                      }`}
+                        }`}
                     >
                       {/* Template badge */}
                       {message.content_type === 'template' && (
@@ -777,7 +775,7 @@ export default function App() {
           <Terminal className="size-4.5 text-emerald-400" />
           <h2 className="font-bold text-sm tracking-wide uppercase">Sandbox Event logs</h2>
         </div>
-        
+
         {/* Logs List */}
         <div className="h-[240px] overflow-y-auto border-b border-zinc-800 p-3 space-y-1 bg-zinc-950/20">
           {logs.length === 0 ? (
@@ -787,20 +785,18 @@ export default function App() {
               <button
                 key={index}
                 onClick={() => setActiveLog(log)}
-                className={`w-full text-left p-2 rounded-md text-[10px] font-mono flex items-center justify-between border ${
-                  activeLog === log
+                className={`w-full text-left p-2 rounded-md text-[10px] font-mono flex items-center justify-between border ${activeLog === log
                     ? 'bg-zinc-800 border-zinc-700 text-zinc-200'
                     : 'border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/30'
-                }`}
+                  }`}
               >
                 <span className="truncate flex items-center gap-1.5">
-                  <span className={`size-1.5 rounded-full ${
-                    log.status === 'success'
+                  <span className={`size-1.5 rounded-full ${log.status === 'success'
                       ? 'bg-emerald-500'
                       : log.status === 'error'
-                      ? 'bg-red-500'
-                      : 'bg-yellow-500 animate-pulse'
-                  }`} />
+                        ? 'bg-red-500'
+                        : 'bg-yellow-500 animate-pulse'
+                    }`} />
                   {log.type}
                 </span>
                 <span className="text-[9px] text-zinc-600 shrink-0">
@@ -824,15 +820,14 @@ export default function App() {
               </div>
               <div className="flex justify-between border-b border-zinc-800 pb-1.5">
                 <span className="text-zinc-500">Status:</span>
-                <span className={`font-bold ${
-                  activeLog.status === 'success'
+                <span className={`font-bold ${activeLog.status === 'success'
                     ? 'text-emerald-400'
                     : activeLog.status === 'error'
-                    ? 'text-red-400'
-                    : 'text-yellow-400'
-                }`}>{activeLog.status.toUpperCase()}</span>
+                      ? 'text-red-400'
+                      : 'text-yellow-400'
+                  }`}>{activeLog.status.toUpperCase()}</span>
               </div>
-              
+
               {/* Output raw payload JSON */}
               <div className="space-y-1">
                 <div className="text-zinc-500">Webhook JSON Payload:</div>
