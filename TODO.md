@@ -9,3 +9,5 @@ make eval doc:
 - conclusion - risks
 
 put separate interface for user message simulation at a new port - test with wacrm
+
+run db schema acc to ER diagram with local psql not supabase
