@@ -45,7 +45,7 @@ export function DeveloperSimulator() {
 
   const [loading, setLoading] = useState(true);
   const [isMock, setIsMock] = useState(false);
-  const [config, setConfig] = useState<any>(null);
+  const [config, setConfig] = useState<Record<string, unknown> | null>(null);
   const [contacts, setContacts] = useState<SimpleContact[]>([]);
   const [recentMessages, setRecentMessages] = useState<SimpleMessage[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -130,6 +130,7 @@ export function DeveloperSimulator() {
         .limit(10);
 
       if (messagesData) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const parsed: SimpleMessage[] = messagesData.map((m: any) => ({
           id: m.id,
           message_id: m.message_id,
@@ -150,7 +151,7 @@ export function DeveloperSimulator() {
     }
   }
 
-  const addConsoleLog = (message: string, payload?: any) => {
+  const addConsoleLog = (message: string, payload?: unknown) => {
     const timestamp = new Date().toLocaleTimeString();
     setConsoleLogs((prev) => [`[${timestamp}] ${message}`, ...prev].slice(0, 50));
     if (payload) {
@@ -196,7 +197,7 @@ export function DeveloperSimulator() {
       const unixTime = Math.floor(Date.now() / 1000).toString();
 
       // Shape Meta Webhook Inbound Message JSON
-      const payload: any = {
+      const payload: Record<string, unknown> = {
         object: 'whatsapp_business_account',
         entry: [
           {
@@ -616,7 +617,7 @@ export function DeveloperSimulator() {
                             type="radio"
                             name="deliveryStatus"
                             checked={selectedStatus === st}
-                            onChange={() => setSelectedStatus(st as any)}
+                            onChange={() => setSelectedStatus(st as "delivered" | "read" | "failed")}
                             className="accent-primary"
                           />
                           {st}
