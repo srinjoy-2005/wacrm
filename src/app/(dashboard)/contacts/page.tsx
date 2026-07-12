@@ -193,7 +193,7 @@ export default function ContactsPage() {
     const tagsByContact: Record<string, string[]> = {};
     contactTags?.forEach((ct) => {
       if (!tagsByContact[ct.contact_id]) tagsByContact[ct.contact_id] = [];
-      tagsByContact[ct.contact_id].push(ct.tag_id);
+      tagsByContact[ct.contact_id].push(ct.collection_id);
     });
 
     const enriched: ContactWithTags[] = contactRows.map((c) => ({

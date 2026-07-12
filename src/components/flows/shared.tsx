@@ -407,7 +407,7 @@ export function summarizeNode(node: BuilderNode): string | null {
     }
     case 'set_tag': {
       const mode = cfg.mode === 'remove' ? 'Remove' : 'Add';
-      const tagId = typeof cfg.tag_id === 'string' ? cfg.tag_id : '';
+      const tagId = typeof cfg.collection_id === 'string' ? cfg.collection_id : '';
       // No tag name available without an async lookup here; show a
       // short prefix of the UUID so users can disambiguate between
       // multiple set_tag nodes at a glance.

@@ -746,7 +746,7 @@ function ConditionForm({
 
 interface SetTagCfg {
   mode?: "add" | "remove";
-  tag_id?: string;
+  collection_id?: string;
   next_node_key?: string;
 }
 
@@ -787,7 +787,7 @@ function SetTagForm({
           <label className="mb-1 block text-xs text-muted-foreground">Tag</label>
           {tags.length > 0 ? (
             <Select
-              value={cfg.tag_id ?? ""}
+              value={cfg.collection_id ?? ""}
               onValueChange={(v) => onUpdateConfig({ collection_id: v })}
             >
               <SelectTrigger className="bg-muted">
@@ -803,7 +803,7 @@ function SetTagForm({
             </Select>
           ) : (
             <Input
-              value={cfg.tag_id ?? ""}
+              value={cfg.collection_id ?? ""}
               onChange={(e) => onUpdateConfig({ collection_id: e.target.value })}
               placeholder="Tag UUID"
               className="bg-muted font-mono text-xs"

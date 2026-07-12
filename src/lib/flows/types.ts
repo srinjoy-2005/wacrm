@@ -349,7 +349,7 @@ export interface DispatchInboundResult {
    */
   consumed: boolean;
   /** For diagnostics / logging — null when not consumed. */
-  flow_run_id?: string;
+  session_id?: string;
   /** For diagnostics. */
   outcome?:
     | "advanced"

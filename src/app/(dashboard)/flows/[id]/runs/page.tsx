@@ -197,7 +197,7 @@ export default function FlowRunsPage() {
             <RunCard
               key={run.id}
               run={run}
-              events={events.filter((e) => e.flow_run_id === run.id)}
+              events={events.filter((e) => e.session_id === run.id)}
               expanded={expanded.has(run.id)}
               onToggle={() => toggle(run.id)}
             />

@@ -29,7 +29,7 @@ export interface AutomationContext {
   /** Arbitrary variables accumulated during execution. */
   vars?: Record<string, unknown>
   /** The tag id that was added, for tag_added trigger. */
-  tag_id?: string
+  collection_id?: string
   /** Agent the conversation was assigned to, for conversation_assigned. */
   agent_id?: string
 }
@@ -397,27 +397,27 @@ async function runStep(step: AutomationStep, args: ExecuteArgs): Promise<string>
       // the attacker-supplied contactId comes from the ownership guard in
       // runAutomationsForTrigger.
       const cfg = step.step_config as TagStepConfig
-      if (!args.contactId || !cfg.tag_id) throw new Error('add_tag needs contact + collection_id')
+      if (!args.contactId || !cfg.collection_id) throw new Error('add_tag needs contact + collection_id')
       await db
         .from('collection_members')
         .upsert(
-          { contact_id: args.contactId, collection_id: cfg.tag_id },
+          { contact_id: args.contactId, collection_id: cfg.collection_id },
           { onConflict: 'contact_id,collection_id', ignoreDuplicates: true },
         )
-      return `tag ${cfg.tag_id} added`
+      return `tag ${cfg.collection_id} added`
     }
 
     case 'remove_tag': {
       // See add_tag: tenant scoping relies on the runAutomationsForTrigger
       // ownership guard, since contact_tags carries no account_id.
       const cfg = step.step_config as TagStepConfig
-      if (!args.contactId || !cfg.tag_id) throw new Error('remove_tag needs contact + collection_id')
+      if (!args.contactId || !cfg.collection_id) throw new Error('remove_tag needs contact + collection_id')
       await db
         .from('collection_members')
         .delete()
         .eq('contact_id', args.contactId)
-        .eq('collection_id', cfg.tag_id)
-      return `tag ${cfg.tag_id} removed`
+        .eq('collection_id', cfg.collection_id)
+      return `tag ${cfg.collection_id} removed`
     }
 
     case 'assign_conversation': {

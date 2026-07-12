@@ -133,7 +133,7 @@ export async function GET(request: Request) {
     if (matchedConfig) {
       // Fire-and-forget GCM upgrade. Safe to run on every subscribe
       // since it's a no-op once the column is already GCM.
-      if (isLegacyFormat(matchedConfig.verify_token)) {
+      if (matchedConfig.verify_token && isLegacyFormat(matchedConfig.verify_token)) {
         void supabaseAdmin()
           .from('whatsapp_config')
           .update({ verify_token: encrypt(verifyToken) })
@@ -272,7 +272,7 @@ async function processWebhook(body: { entry?: WhatsAppWebhookEntry[] }) {
       // operators see the real cause in logs. ≥2 rows shouldn't happen
       // post-migration 013 (UNIQUE constraint), but a row created
       // before the constraint, or a race, would still surface here.
-      let configRows: Record<string, unknown>[] | null = null
+      let configRows: Array<{ account_id: string; user_id: string; access_token: string }> | null = null
       let configError: unknown = null
 
       if (process.env.MOCK_WHATSAPP === 'true') {
@@ -311,7 +311,7 @@ async function processWebhook(body: { entry?: WhatsAppWebhookEntry[] }) {
           phoneNumberId,
           '— inbound message dropped. Resolve duplicates so each number maps to a single account.',
           'Account owners:',
-          configRows.map((r: { account_id: string; user_id: string }) => `${r.account_id} (admin ${r.user_id})`)
+          configRows.map((r) => `${r.account_id} (admin ${r.user_id})`)
         )
         continue
       }

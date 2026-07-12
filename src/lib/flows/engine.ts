@@ -711,7 +711,7 @@ async function advanceFromNodeKey(
           await db
             .from("contact_tags")
             .upsert(
-              { contact_id: run.contact_id!, collection_id: cfg.tag_id },
+              { contact_id: run.contact_id!, collection_id: cfg.collection_id },
               { onConflict: "contact_id,collection_id" },
             );
         } else {
@@ -719,7 +719,7 @@ async function advanceFromNodeKey(
             .from("contact_tags")
             .delete()
             .eq("contact_id", run.contact_id!)
-            .eq("collection_id", cfg.tag_id);
+            .eq("collection_id", cfg.collection_id);
         }
       } catch (err) {
         // Non-fatal — log + advance. A tag-write failure shouldn't

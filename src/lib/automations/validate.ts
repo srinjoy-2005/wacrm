@@ -3,7 +3,7 @@ import type { AutomationTriggerType } from '@/types'
 // ------------------------------------------------------------
 // Pre-flight config validation for automations about to be activated.
 //
-// Activating a broken automation (e.g. an add_tag step with tag_id="")
+// Activating a broken automation (e.g. an add_tag step with collection_id="")
 // used to succeed silently — every trigger then produced a failed log
 // row with a cryptic "add_tag needs contact + collection_id" message, and
 // users often didn't notice until reviewing logs. This module lets
@@ -65,8 +65,8 @@ function validateOne(step: StepLike, path: string, issues: ValidationIssue[]): v
       break
     case 'add_tag':
     case 'remove_tag':
-      if (!nonEmpty(c.tag_id)) {
-        issues.push({ path: `${path}.tag_id`, message: 'tag is required' })
+      if (!nonEmpty(c.collection_id)) {
+        issues.push({ path: `${path}.collection_id`, message: 'tag is required' })
       }
       break
     case 'assign_conversation':
@@ -171,7 +171,7 @@ export function validateTriggerForActivation(
       issues.push({ path: 'trigger.schedule', message: 'schedule is required' })
     }
   } else if (triggerType === 'tag_added') {
-    if (!nonEmpty(cfg.tag_id)) {
+    if (!nonEmpty(cfg.collection_id)) {
       issues.push({ path: 'trigger.collection_id', message: 'tag is required' })
     }
   }

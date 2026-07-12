@@ -124,7 +124,7 @@ export function ContactDetailView({
 
     if (tagsRes.data) setAllTags(tagsRes.data);
     if (contactTagsRes.data) {
-      setContactTagIds(contactTagsRes.data.map((ct) => ct.tag_id));
+      setContactTagIds(contactTagsRes.data.map((ct) => ct.collection_id));
     }
   }, [contactId, supabase]);
 

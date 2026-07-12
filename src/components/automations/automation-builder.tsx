@@ -809,7 +809,7 @@ function TriggerCard({
                   Tag
                 </label>
                 <TagSelect
-                  value={(config.tag_id as string) ?? ""}
+                  value={(config.collection_id as string) ?? ""}
                   onChange={(v) => onConfigChange({ ...config, collection_id: v })}
                 />
               </div>
@@ -1199,7 +1199,7 @@ function StepEditor({
       return (
         <FieldBlock label="Tag">
           <TagSelect
-            value={(cfg.tag_id as string) ?? ""}
+            value={(cfg.collection_id as string) ?? ""}
             onChange={(v) => set({ collection_id: v })}
           />
         </FieldBlock>

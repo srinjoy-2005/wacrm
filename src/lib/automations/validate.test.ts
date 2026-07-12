@@ -227,7 +227,7 @@ describe("validateTriggerForActivation", () => {
     ).toEqual([]);
   });
 
-  it("requires tag_id on tag_added triggers", () => {
+  it("requires collection_id on tag_added triggers", () => {
     expect(validateTriggerForActivation("tag_added", {})).toEqual([
       { path: "trigger.collection_id", message: "tag is required" },
     ]);

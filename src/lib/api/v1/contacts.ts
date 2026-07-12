@@ -184,7 +184,7 @@ export async function setContactTags(
     throw new ContactError('Failed to read contact tags', 500);
   }
   const existing = new Set(
-    (current ?? []).map((r) => r.tag_id as string)
+    (current ?? []).map((r) => r.collection_id as string)
   );
 
   const toAdd = [...desired].filter((id) => !existing.has(id));
@@ -201,7 +201,7 @@ export async function setContactTags(
   if (toAdd.length > 0) {
     const { error } = await db
       .from('collection_members')
-      .insert(toAdd.map((tag_id) => ({ contact_id: contactId, tag_id })));
+      .insert(toAdd.map((collection_id) => ({ contact_id: contactId, collection_id })));
     if (error) throw new ContactError('Failed to update contact tags', 500);
   }
 }

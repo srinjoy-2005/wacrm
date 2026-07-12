@@ -73,7 +73,7 @@ export function ContactForm({
       setPhone(contact?.phone ?? '');
       setEmail(contact?.email ?? '');
       setCompany(contact?.company ?? '');
-      setSelectedTagIds(contactTags.map((ct) => ct.tag_id));
+      setSelectedTagIds(contactTags.map((ct) => ct.collection_id));
       setDupMatch(null);
       fetchTags();
     }
@@ -183,7 +183,7 @@ export function ContactForm({
           .eq('contact_id', contactId);
 
         if (selectedTagIds.length > 0) {
-          const tagRows = selectedTagIds.map((tag_id) => ({
+          const tagRows = selectedTagIds.map((collection_id) => ({
             contact_id: contactId!,
             collection_id,
           }));
