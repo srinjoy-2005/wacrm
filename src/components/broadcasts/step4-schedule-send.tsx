@@ -62,9 +62,9 @@ export function Step4ScheduleSend({
           setEstimatedReach(count ?? 0);
         } else if (audience.type === 'tags' && audience.tagIds && audience.tagIds.length > 0) {
           const { data: contactTags } = await supabase
-            .from('contact_tags')
+            .from('collection_members')
             .select('contact_id')
-            .in('tag_id', audience.tagIds);
+            .in('collection_id', audience.tagIds);
 
           const uniqueIds = new Set((contactTags ?? []).map((ct) => ct.contact_id));
           setEstimatedReach(uniqueIds.size);

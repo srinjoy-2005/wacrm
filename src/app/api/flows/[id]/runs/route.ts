@@ -45,7 +45,7 @@ export async function GET(
   // joined selects keep the round-trip count to the runs query + one
   // per-run events query.
   const { data: runs, error: runsErr } = await supabase
-    .from('flow_runs')
+    .from('sessions')
     .select(
       'id, status, current_node_key, started_at, last_advanced_at, ended_at, end_reason, vars, reprompt_count, contact:contacts(id, name, phone)',
     )
@@ -58,7 +58,7 @@ export async function GET(
 
   const runIds = (runs ?? []).map((r) => (r as { id: string }).id)
   let events: Array<{
-    flow_run_id: string
+    session_id: string
     event_type: string
     node_key: string | null
     payload: Record<string, unknown>
@@ -66,9 +66,9 @@ export async function GET(
   }> = []
   if (runIds.length > 0) {
     const { data: evs, error: evsErr } = await supabase
-      .from('flow_run_events')
-      .select('flow_run_id, event_type, node_key, payload, created_at')
-      .in('flow_run_id', runIds)
+      .from('session_events')
+      .select('session_id, event_type, node_key, payload, created_at')
+      .in('session_id', runIds)
       .order('created_at', { ascending: true })
     if (evsErr) {
       // Non-fatal — the page can still show runs without timelines.

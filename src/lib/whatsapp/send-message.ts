@@ -424,7 +424,7 @@ export async function sendMessageToConversation(
   // is the strongest "yield, human is here" signal. Best-effort.
   try {
     const { error: pauseErr } = await supabaseAdmin()
-      .from('flow_runs')
+      .from('sessions')
       .update({
         status: 'paused_by_agent',
         ended_at: new Date().toISOString(),

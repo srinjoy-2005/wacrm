@@ -29,7 +29,7 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
   const [copied, setCopied] = useState(false);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [notes, setNotes] = useState<ContactNote[]>([]);
-  const [tags, setTags] = useState<(Tag & { contact_tag_id: string })[]>([]);
+  const [tags, setTags] = useState<(Tag & { contact_collection_id: string })[]>([]);
   const [newNote, setNewNote] = useState("");
   const [addingNote, setAddingNote] = useState(false);
 
@@ -52,7 +52,7 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
         .order("created_at", { ascending: false }),
       supabase
         .from("contact_tags")
-        .select("id, tag_id, tags(*)")
+        .select("id, collection_id, tags(*)")
         .eq("contact_id", contact.id),
     ]);
 
@@ -63,7 +63,7 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
         .filter((ct: Record<string, unknown>) => ct.tags)
         .map((ct: Record<string, unknown>) => ({
           ...(ct.tags as Tag),
-          contact_tag_id: ct.id as string,
+          contact_collection_id: ct.id as string,
         }));
       setTags(mapped);
     }

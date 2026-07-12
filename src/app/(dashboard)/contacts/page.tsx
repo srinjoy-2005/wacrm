@@ -102,7 +102,7 @@ export default function ContactsPage() {
   const fetchSeq = useRef(0);
 
   const fetchTags = useCallback(async () => {
-    const { data } = await supabase.from('tags').select('*');
+    const { data } = await supabase.from('collections').select('*');
     if (data) {
       const map: Record<string, Tag> = {};
       data.forEach((t) => (map[t.id] = t));
@@ -136,7 +136,7 @@ export default function ContactsPage() {
       // windowed total count + pagination) so a tag covering many
       // contacts can't silently truncate the result or overflow an IN
       // clause. See migration 025_filter_contacts_by_tags.
-      const { data, error } = await supabase.rpc('filter_contacts_by_tags', {
+      const { data, error } = await supabase.rpc('filter_contacts_by_collections', {
         p_tag_ids: selectedTagIds,
         p_search: term || null,
         p_limit: PAGE_SIZE,
@@ -185,8 +185,8 @@ export default function ContactsPage() {
     // Fetch tags for these contacts
     const contactIds = contactRows.map((c) => c.id);
     const { data: contactTags } = await supabase
-      .from('contact_tags')
-      .select('contact_id, tag_id')
+      .from('collection_members')
+      .select('contact_id, collection_id')
       .in('contact_id', contactIds);
     if (seq !== fetchSeq.current) return; // superseded by a newer fetch
 
@@ -229,7 +229,7 @@ export default function ContactsPage() {
 
   async function openEditForm(contact: Contact) {
     const { data } = await supabase
-      .from('contact_tags')
+      .from('collection_members')
       .select('*')
       .eq('contact_id', contact.id);
     setEditContact(contact);

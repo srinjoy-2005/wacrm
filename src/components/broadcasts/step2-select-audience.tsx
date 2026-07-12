@@ -97,7 +97,7 @@ export function Step2SelectAudience({
       setLoadingTags(true);
       try {
         const supabase = createClient();
-        const { data } = await supabase.from('tags').select('*').order('name');
+        const { data } = await supabase.from('collections').select('*').order('name');
         setTags(data ?? []);
       } finally {
         setLoadingTags(false);
@@ -141,9 +141,9 @@ export function Step2SelectAudience({
         audience.tagIds.length > 0
       ) {
         const { data } = await supabase
-          .from('contact_tags')
+          .from('collection_members')
           .select('contact_id')
-          .in('tag_id', audience.tagIds);
+          .in('collection_id', audience.tagIds);
         baseIds = new Set((data ?? []).map((r) => r.contact_id));
       } else if (
         audience.type === 'custom_field' &&
@@ -177,9 +177,9 @@ export function Step2SelectAudience({
       let excludeSet: Set<string> | null = null;
       if (audience.excludeTagIds && audience.excludeTagIds.length > 0) {
         const { data: excludeRows } = await supabase
-          .from('contact_tags')
+          .from('collection_members')
           .select('contact_id')
-          .in('tag_id', audience.excludeTagIds);
+          .in('collection_id', audience.excludeTagIds);
         excludeSet = new Set((excludeRows ?? []).map((r) => r.contact_id));
       }
 

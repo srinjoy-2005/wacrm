@@ -104,7 +104,7 @@ export function ContactForm({
   async function fetchTags() {
     setLoadingTags(true);
     const { data } = await supabase
-      .from('tags')
+      .from('collections')
       .select('*')
       .order('name');
     if (data) setTags(data);
@@ -178,17 +178,17 @@ export function ContactForm({
       // Sync tags
       if (contactId) {
         await supabase
-          .from('contact_tags')
+          .from('collection_members')
           .delete()
           .eq('contact_id', contactId);
 
         if (selectedTagIds.length > 0) {
           const tagRows = selectedTagIds.map((tag_id) => ({
             contact_id: contactId!,
-            tag_id,
+            collection_id,
           }));
           const { error: tagError } = await supabase
-            .from('contact_tags')
+            .from('collection_members')
             .insert(tagRows);
           if (tagError) throw tagError;
         }

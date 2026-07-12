@@ -60,7 +60,7 @@ export async function GET(request: Request) {
     }
 
     if (tag) {
-      query = query.eq('tag_filter.tag_id', tag);
+      query = query.eq('tag_filter.collection_id', tag);
     }
 
     query = query

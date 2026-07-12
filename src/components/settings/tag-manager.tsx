@@ -68,7 +68,7 @@ export function TagManager() {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('tags')
+        .from('collections')
         .select('*')
         .eq('user_id', userId)
         .order('created_at', { ascending: true });
@@ -98,7 +98,7 @@ export function TagManager() {
 
       // account_id is mandatory on every account-scoped insert (NOT
       // NULL + RLS, no DB default).
-      const { error } = await supabase.from('tags').insert({
+      const { error } = await supabase.from('collections').insert({
         user_id: user.id,
         account_id: accountId,
         name: newTagName.trim(),
@@ -130,7 +130,7 @@ export function TagManager() {
     try {
       setDeleting(true);
       const { error } = await supabase
-        .from('tags')
+        .from('collections')
         .delete()
         .eq('id', tagToDelete.id);
 

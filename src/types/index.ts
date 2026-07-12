@@ -116,7 +116,7 @@ export interface Tag {
 export interface ContactTag {
   id: string;
   contact_id: string;
-  tag_id: string;
+  collection_id: string;
 }
 
 export interface CustomField {
@@ -424,7 +424,7 @@ export interface KeywordMatchTriggerConfig {
 }
 
 export interface TagTriggerConfig {
-  tag_id: string;
+  collection_id: string;
 }
 
 export interface TimeBasedTriggerConfig {
@@ -451,7 +451,7 @@ export interface SendTemplateStepConfig {
 }
 
 export interface TagStepConfig {
-  tag_id: string;
+  collection_id: string;
 }
 
 export interface AssignConversationStepConfig {

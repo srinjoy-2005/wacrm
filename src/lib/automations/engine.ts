@@ -397,12 +397,12 @@ async function runStep(step: AutomationStep, args: ExecuteArgs): Promise<string>
       // the attacker-supplied contactId comes from the ownership guard in
       // runAutomationsForTrigger.
       const cfg = step.step_config as TagStepConfig
-      if (!args.contactId || !cfg.tag_id) throw new Error('add_tag needs contact + tag_id')
+      if (!args.contactId || !cfg.tag_id) throw new Error('add_tag needs contact + collection_id')
       await db
-        .from('contact_tags')
+        .from('collection_members')
         .upsert(
-          { contact_id: args.contactId, tag_id: cfg.tag_id },
-          { onConflict: 'contact_id,tag_id', ignoreDuplicates: true },
+          { contact_id: args.contactId, collection_id: cfg.tag_id },
+          { onConflict: 'contact_id,collection_id', ignoreDuplicates: true },
         )
       return `tag ${cfg.tag_id} added`
     }
@@ -411,12 +411,12 @@ async function runStep(step: AutomationStep, args: ExecuteArgs): Promise<string>
       // See add_tag: tenant scoping relies on the runAutomationsForTrigger
       // ownership guard, since contact_tags carries no account_id.
       const cfg = step.step_config as TagStepConfig
-      if (!args.contactId || !cfg.tag_id) throw new Error('remove_tag needs contact + tag_id')
+      if (!args.contactId || !cfg.tag_id) throw new Error('remove_tag needs contact + collection_id')
       await db
-        .from('contact_tags')
+        .from('collection_members')
         .delete()
         .eq('contact_id', args.contactId)
-        .eq('tag_id', cfg.tag_id)
+        .eq('collection_id', cfg.tag_id)
       return `tag ${cfg.tag_id} removed`
     }
 
@@ -600,10 +600,10 @@ async function evaluateCondition(cfg: ConditionStepConfig, args: ExecuteArgs): P
       // contact), so tenant scoping here relies on the contact-ownership
       // guard in runAutomationsForTrigger.
       const { count } = await db
-        .from('contact_tags')
+        .from('collection_members')
         .select('id', { count: 'exact', head: true })
         .eq('contact_id', args.contactId)
-        .eq('tag_id', cfg.operand)
+        .eq('collection_id', cfg.operand)
       return (count ?? 0) > 0
     }
     case 'contact_field': {

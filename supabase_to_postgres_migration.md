@@ -1,4 +1,14 @@
-# WACRM → Local PostgreSQL + GCP Migration Plan
+> [!CAUTION]
+> **⚠️ THIS PLAN IS ON HOLD (as of 2026-07-11)**
+>
+> The full Supabase replacement approach described below is **too complex** — WACRM uses 4 Supabase subsystems (Auth/GoTrue, Realtime, Storage, PostgREST) across ~45 files with 30 migrations, making a clean swap a 6+ week effort with critical risk of data loss, auth invalidation, and feature regression.
+>
+> **The active plan is: self-host Supabase via Docker** (keep all Supabase features, just change 3 env vars).
+> See: [`docs/self_hosted_supabase_migration.md`](file:///home/iamsrinjoy/important-stuff/wacrm/docs/self_hosted_supabase_migration.md)
+>
+> Do NOT proceed with the plan below without explicit stakeholder approval.
+
+# WACRM → Local PostgreSQL + GCP Migration Plan (ON HOLD)
 
 > **Audience**: Tech Lead, Engineering Team  
 > **Status**: DRAFT — Pending Approval  
@@ -218,22 +228,22 @@ CREATE INDEX idx_collection_members_contact ON collection_members(contact_id);
 #### Step 1: Create the `wacrm_dev` database
 
 ```bash
-# Create a dedicated database (run as the postgres superuser)
-sudo -u postgres createdb wacrm_dev
+# Create a dedicated database — uses local user 'iamsrinjoy' (peer auth, no sudo needed)
+createdb wacrm_dev
 
 # Verify it exists
-psql -h localhost -U postgres -l | grep wacrm_dev
+psql -h localhost -d wacrm_dev -c "\l" | grep wacrm_dev
 ```
 
 > [!TIP]
-> If `peer` authentication blocks you, edit `/etc/postgresql/14/main/pg_hba.conf` and change the local method to `md5` or `trust` for development.
+> The local PostgreSQL is configured for the `iamsrinjoy` system user. Always connect with `psql -h localhost -d wacrm_dev` (omit `-U postgres`). Password prompt will use the OS user's PG credentials.
 
 #### Step 2: Run the new schema migration
 
-Create the file `migrations/001_new_schema.sql` in the project root (replacing the old `supabase/migrations/` directory) and execute it:
+The file `migrations/001_new_schema.sql` already exists in the project root. Execute it:
 
 ```bash
-psql -h localhost -U postgres -d wacrm_dev -f migrations/001_new_schema.sql
+psql -h localhost -d wacrm_dev -f migrations/001_new_schema.sql
 ```
 
 The SQL content is defined in [Section 2.1](#21-schema-sql-initial-migration) above.
@@ -241,29 +251,30 @@ The SQL content is defined in [Section 2.1](#21-schema-sql-initial-migration) ab
 #### Step 3: Verify all 8 tables exist
 
 ```bash
-psql -h localhost -U postgres -d wacrm_dev -c "\dt"
+psql -h localhost -d wacrm_dev -c "\dt"
 ```
 
 Expected output:
 ```
              List of relations
- Schema |       Name         | Type  |  Owner
---------+--------------------+-------+----------
- public | collection_members | table | postgres
- public | collections        | table | postgres
- public | contacts           | table | postgres
- public | conversations      | table | postgres
- public | delivery_log       | table | postgres
- public | flows              | table | postgres
- public | messages           | table | postgres
- public | sessions           | table | postgres
+ Schema |       Name         | Type  |   Owner
+--------+--------------------+-------+------------
+ public | collection_members | table | iamsrinjoy
+ public | collections        | table | iamsrinjoy
+ public | contacts           | table | iamsrinjoy
+ public | conversations      | table | iamsrinjoy
+ public | delivery_log       | table | iamsrinjoy
+ public | flows              | table | iamsrinjoy
+ public | messages           | table | iamsrinjoy
+ public | sessions           | table | iamsrinjoy
 ```
 
 #### Step 4: Set the connection string
 
 Add to `.env.local`:
 ```env
-DATABASE_URL=postgresql://postgres:password@localhost:5432/wacrm_dev
+# Local dev — iamsrinjoy user, no password needed (peer/trust auth)
+DATABASE_URL=postgresql://iamsrinjoy@localhost:5432/wacrm_dev
 ```
 
 #### Step 5: Seed test data (optional)

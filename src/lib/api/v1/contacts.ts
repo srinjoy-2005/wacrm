@@ -177,8 +177,8 @@ export async function setContactTags(
   // is error-checked and surfaced as a ContactError (→ 500) instead of
   // being swallowed behind a misleading 200.
   const { data: current, error: readErr } = await db
-    .from('contact_tags')
-    .select('tag_id')
+    .from('collection_members')
+    .select('collection_id')
     .eq('contact_id', contactId);
   if (readErr) {
     throw new ContactError('Failed to read contact tags', 500);
@@ -192,15 +192,15 @@ export async function setContactTags(
 
   if (toRemove.length > 0) {
     const { error } = await db
-      .from('contact_tags')
+      .from('collection_members')
       .delete()
       .eq('contact_id', contactId)
-      .in('tag_id', toRemove);
+      .in('collection_id', toRemove);
     if (error) throw new ContactError('Failed to update contact tags', 500);
   }
   if (toAdd.length > 0) {
     const { error } = await db
-      .from('contact_tags')
+      .from('collection_members')
       .insert(toAdd.map((tag_id) => ({ contact_id: contactId, tag_id })));
     if (error) throw new ContactError('Failed to update contact tags', 500);
   }

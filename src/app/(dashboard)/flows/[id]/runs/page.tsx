@@ -50,7 +50,7 @@ interface RunRow {
 }
 
 interface EventRow {
-  flow_run_id: string;
+  session_id: string;
   event_type: string;
   node_key: string | null;
   payload: Record<string, unknown>;

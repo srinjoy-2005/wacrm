@@ -677,7 +677,7 @@ function validateNode(
           severity: "error",
           scope: "node",
           node_key: node.node_key,
-          field: "tag_id",
+          field: "collection_id",
           message: "Set-tag needs a tag to apply.",
         });
       }

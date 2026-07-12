@@ -261,7 +261,7 @@ async function logEvent(
   payload: Record<string, unknown> = {},
 ): Promise<void> {
   const { error } = await db.from("flow_run_events").insert({
-    flow_run_id: flowRunId,
+    session_id: flowRunId,
     event_type,
     node_key,
     payload,
@@ -279,7 +279,7 @@ async function logEvent(
  * exit without re-advancing.
  *
  * Implementation note: scoped to runs belonging to this user/contact
- * so the lookup is cheap (the index on flow_run_events(flow_run_id,
+ * so the lookup is cheap (the index on flow_run_events(session_id,
  * event_type) plus the small set of runs per contact).
  */
 async function isDuplicateInbound(
@@ -480,7 +480,7 @@ async function evaluateConditionNode(
       .from("contact_tags")
       .select("contact_id", { count: "exact", head: true })
       .eq("contact_id", run.contact_id!)
-      .eq("tag_id", cfg.subject_key);
+      .eq("collection_id", cfg.subject_key);
     // For tags, "present" really is the only meaningful test — the
     // `present`/`absent` operators are the natural fit. equals/contains
     // against a tag UUID would still work mechanically (compare its
@@ -711,15 +711,15 @@ async function advanceFromNodeKey(
           await db
             .from("contact_tags")
             .upsert(
-              { contact_id: run.contact_id!, tag_id: cfg.tag_id },
-              { onConflict: "contact_id,tag_id" },
+              { contact_id: run.contact_id!, collection_id: cfg.tag_id },
+              { onConflict: "contact_id,collection_id" },
             );
         } else {
           await db
             .from("contact_tags")
             .delete()
             .eq("contact_id", run.contact_id!)
-            .eq("tag_id", cfg.tag_id);
+            .eq("collection_id", cfg.tag_id);
         }
       } catch (err) {
         // Non-fatal — log + advance. A tag-write failure shouldn't
@@ -850,7 +850,7 @@ export async function dispatchInboundToFlows(
       if (dupe) {
         return {
           consumed: true,
-          flow_run_id: activeRun.id,
+          session_id: activeRun.id,
           outcome: "duplicate_inbound_ignored",
         };
       }
@@ -907,7 +907,7 @@ async function handleReplyForActiveRun(
     await endRun(db, run.id, "failed", "active_run_missing_current_node");
     return {
       consumed: true,
-      flow_run_id: run.id,
+      session_id: run.id,
       outcome: "no_match",
     };
   }
@@ -915,7 +915,7 @@ async function handleReplyForActiveRun(
   const currentNode = nodes.get(run.current_node_key) ?? null;
   if (!currentNode) {
     await endRun(db, run.id, "failed", "current_node_not_found");
-    return { consumed: true, flow_run_id: run.id, outcome: "no_match" };
+    return { consumed: true, session_id: run.id, outcome: "no_match" };
   }
 
   // Two ways a reply can advance:
@@ -979,7 +979,7 @@ async function handleReplyForActiveRun(
     const outcome = await advanceFromNodeKey(db, run, matched, nodes);
     return {
       consumed: true,
-      flow_run_id: run.id,
+      session_id: run.id,
       outcome: outcome.outcome,
     };
   }
@@ -1001,7 +1001,7 @@ async function handleReplyForActiveRun(
   });
   if (action.type === "ignore") {
     // Don't consume — let automations have a shot at it.
-    return { consumed: false, flow_run_id: run.id, outcome: "no_match" };
+    return { consumed: false, session_id: run.id, outcome: "no_match" };
   }
   if (action.type === "reprompt") {
     // Re-send the same prompt. Same node, no current_node_key change.
@@ -1028,7 +1028,7 @@ async function handleReplyForActiveRun(
         });
       }
     }
-    return { consumed: true, flow_run_id: run.id, outcome: "fallback_fired" };
+    return { consumed: true, session_id: run.id, outcome: "fallback_fired" };
   }
   if (action.type === "handoff") {
     if (run.conversation_id) {
@@ -1041,11 +1041,11 @@ async function handleReplyForActiveRun(
       reason: "fallback_exhausted",
     });
     await endRun(db, run.id, "handed_off", "fallback_exhausted");
-    return { consumed: true, flow_run_id: run.id, outcome: "handed_off" };
+    return { consumed: true, session_id: run.id, outcome: "handed_off" };
   }
   // action.type === 'end'
   await endRun(db, run.id, "completed", "fallback_exhausted_end");
-  return { consumed: true, flow_run_id: run.id, outcome: "completed" };
+  return { consumed: true, session_id: run.id, outcome: "completed" };
 }
 
 async function startNewRun(
@@ -1111,7 +1111,7 @@ async function startNewRun(
   const outcome = await advanceFromNodeKey(db, run, flow.entry_node_id!, nodes);
   return {
     consumed: true,
-    flow_run_id: run.id,
+    session_id: run.id,
     outcome: outcome.outcome === "advanced" ? "started" : outcome.outcome,
   };
 }

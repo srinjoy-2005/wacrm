@@ -52,7 +52,7 @@ export async function GET(request: Request) {
   // fallback_policy. Joined in one query — the small set of active
   // runs per tenant keeps this cheap.
   const { data: runs, error } = await admin
-    .from('flow_runs')
+    .from('sessions')
     .select(
       'id, flow_id, user_id, contact_id, last_advanced_at, flows ( fallback_policy )',
     )
@@ -85,7 +85,7 @@ export async function GET(request: Request) {
     // so concurrent advance from a late inbound doesn't overwrite a
     // legitimate update.
     const { data: updated } = await admin
-      .from('flow_runs')
+      .from('sessions')
       .update({
         status: 'timed_out',
         ended_at: now.toISOString(),
@@ -96,8 +96,8 @@ export async function GET(request: Request) {
       .select('id')
 
     if (Array.isArray(updated) && updated.length > 0) {
-      await admin.from('flow_run_events').insert({
-        flow_run_id: r.id,
+      await admin.from('session_events').insert({
+        session_id: r.id,
         event_type: 'timeout',
         payload: {
           age_hours: Math.round(ageHours * 10) / 10,

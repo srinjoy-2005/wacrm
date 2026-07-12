@@ -146,7 +146,7 @@ function blankConfig(type: AutomationStepType): Record<string, unknown> {
       return { template_name: "", language: "en_US" }
     case "add_tag":
     case "remove_tag":
-      return { tag_id: "" }
+      return { collection_id: "" }
     case "assign_conversation":
       return { mode: "round_robin" }
     case "update_contact_field":
@@ -810,7 +810,7 @@ function TriggerCard({
                 </label>
                 <TagSelect
                   value={(config.tag_id as string) ?? ""}
-                  onChange={(v) => onConfigChange({ ...config, tag_id: v })}
+                  onChange={(v) => onConfigChange({ ...config, collection_id: v })}
                 />
               </div>
             )}
@@ -1200,7 +1200,7 @@ function StepEditor({
         <FieldBlock label="Tag">
           <TagSelect
             value={(cfg.tag_id as string) ?? ""}
-            onChange={(v) => set({ tag_id: v })}
+            onChange={(v) => set({ collection_id: v })}
           />
         </FieldBlock>
       )

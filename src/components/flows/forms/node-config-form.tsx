@@ -788,7 +788,7 @@ function SetTagForm({
           {tags.length > 0 ? (
             <Select
               value={cfg.tag_id ?? ""}
-              onValueChange={(v) => onUpdateConfig({ tag_id: v })}
+              onValueChange={(v) => onUpdateConfig({ collection_id: v })}
             >
               <SelectTrigger className="bg-muted">
                 <SelectValue placeholder="Pick a tag…" />
@@ -804,7 +804,7 @@ function SetTagForm({
           ) : (
             <Input
               value={cfg.tag_id ?? ""}
-              onChange={(e) => onUpdateConfig({ tag_id: e.target.value })}
+              onChange={(e) => onUpdateConfig({ collection_id: e.target.value })}
               placeholder="Tag UUID"
               className="bg-muted font-mono text-xs"
             />

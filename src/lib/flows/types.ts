@@ -169,7 +169,7 @@ export interface ConditionNodeConfig {
 export interface SetTagNodeConfig {
   mode: "add" | "remove";
   /** Tag UUID. The builder picks from the user's existing tags. */
-  tag_id: string;
+  collection_id: string;
   next_node_key: string;
 }
 

@@ -167,9 +167,9 @@ export function useBroadcastSending(): UseBroadcastSendingReturn {
       audience.tagIds.length > 0
     ) {
       const { data: contactTags, error: tagError } = await supabase
-        .from('contact_tags')
+        .from('collection_members')
         .select('contact_id')
-        .in('tag_id', audience.tagIds);
+        .in('collection_id', audience.tagIds);
 
       if (tagError)
         throw new Error(`Failed to fetch contact tags: ${tagError.message}`);
@@ -195,9 +195,9 @@ export function useBroadcastSending(): UseBroadcastSendingReturn {
     // types). CSV contacts are synthetic so exclusion doesn't apply.
     if (audience.excludeTagIds && audience.excludeTagIds.length > 0) {
       const { data: excludeRows } = await supabase
-        .from('contact_tags')
+        .from('collection_members')
         .select('contact_id')
-        .in('tag_id', audience.excludeTagIds);
+        .in('collection_id', audience.excludeTagIds);
       const excludedIds = new Set((excludeRows ?? []).map((r) => r.contact_id));
       contacts = contacts.filter((c) => !excludedIds.has(c.id));
     }

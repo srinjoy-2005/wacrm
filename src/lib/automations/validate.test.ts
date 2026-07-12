@@ -23,7 +23,7 @@ describe("validateStepsForActivation", () => {
         step_type: "wait",
         step_config: { amount: 5, unit: "minutes" },
       },
-      { step_type: "add_tag", step_config: { tag_id: "tag-uuid" } },
+      { step_type: "add_tag", step_config: { collection_id: "tag-uuid" } },
       { step_type: "close_conversation", step_config: {} },
     ]);
     expect(issues).toEqual([]);
@@ -33,12 +33,12 @@ describe("validateStepsForActivation", () => {
     const issues = validateStepsForActivation([
       { step_type: "send_message", step_config: { text: "  " } },
       { step_type: "send_template", step_config: {} },
-      { step_type: "add_tag", step_config: { tag_id: "" } },
+      { step_type: "add_tag", step_config: { collection_id: "" } },
     ]);
     expect(issues.map((i) => i.path)).toEqual([
       "steps[0].text",
       "steps[1].template_name",
-      "steps[2].tag_id",
+      "steps[2].collection_id",
     ]);
   });
 
@@ -140,7 +140,7 @@ describe("validateStepsForActivation", () => {
         step_type: "condition",
         step_config: { subject: "tag", operand: "vip" },
         branches: {
-          yes: [{ step_type: "add_tag", step_config: { tag_id: "" } }],
+          yes: [{ step_type: "add_tag", step_config: { collection_id: "" } }],
           no: [
             {
               step_type: "send_message",
@@ -151,7 +151,7 @@ describe("validateStepsForActivation", () => {
       },
     ]);
     expect(issues.map((i) => i.path)).toEqual([
-      "steps[0].yes.steps[0].tag_id",
+      "steps[0].yes.steps[0].collection_id",
       "steps[0].no.steps[0].text",
     ]);
   });
@@ -229,10 +229,10 @@ describe("validateTriggerForActivation", () => {
 
   it("requires tag_id on tag_added triggers", () => {
     expect(validateTriggerForActivation("tag_added", {})).toEqual([
-      { path: "trigger.tag_id", message: "tag is required" },
+      { path: "trigger.collection_id", message: "tag is required" },
     ]);
     expect(
-      validateTriggerForActivation("tag_added", { tag_id: "tag-uuid" }),
+      validateTriggerForActivation("tag_added", { collection_id: "tag-uuid" }),
     ).toEqual([]);
   });
 

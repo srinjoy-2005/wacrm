@@ -49,7 +49,7 @@ export const AUTOMATION_TEMPLATES: Record<TemplateSlug, AutomationTemplateDefini
       },
       {
         step_type: 'add_tag',
-        step_config: { tag_id: '' },
+        step_config: { collection_id: '' },
       },
     ],
   },

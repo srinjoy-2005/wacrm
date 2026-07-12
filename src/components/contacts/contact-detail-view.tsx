@@ -118,8 +118,8 @@ export function ContactDetailView({
     if (!contactId) return;
 
     const [tagsRes, contactTagsRes] = await Promise.all([
-      supabase.from('tags').select('*').order('name'),
-      supabase.from('contact_tags').select('tag_id').eq('contact_id', contactId),
+      supabase.from('collections').select('*').order('name'),
+      supabase.from('collection_members').select('collection_id').eq('contact_id', contactId),
     ]);
 
     if (tagsRes.data) setAllTags(tagsRes.data);
@@ -230,18 +230,18 @@ export function ContactDetailView({
 
     if (isSelected) {
       const { error } = await supabase
-        .from('contact_tags')
+        .from('collection_members')
         .delete()
         .eq('contact_id', contactId)
-        .eq('tag_id', tagId);
+        .eq('collection_id', tagId);
       if (!error) {
         setContactTagIds((prev) => prev.filter((id) => id !== tagId));
         onUpdated();
       }
     } else {
       const { error } = await supabase
-        .from('contact_tags')
-        .insert({ contact_id: contactId, tag_id: tagId });
+        .from('collection_members')
+        .insert({ contact_id: contactId, collection_id: tagId });
       if (!error) {
         setContactTagIds((prev) => [...prev, tagId]);
         onUpdated();

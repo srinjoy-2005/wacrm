@@ -47,7 +47,7 @@ export async function resolveImportTagIds(
   }
 
   const { data: existing, error: fetchError } = await supabase
-    .from('tags')
+    .from('collections')
     .select('id, name')
     .eq('account_id', accountId);
 
@@ -71,7 +71,7 @@ export async function resolveImportTagIds(
 
   if (toCreate.length > 0) {
     const { data: created, error: createError } = await supabase
-      .from('tags')
+      .from('collections')
       .insert(
         toCreate.map((name) => ({
           user_id: userId,
@@ -109,7 +109,7 @@ export async function assignImportedContactTags(
   assignments: ContactTagAssignment[],
   tagIdByKey: Map<string, string>
 ): Promise<number> {
-  const rows: { contact_id: string; tag_id: string }[] = [];
+  const rows: { contact_id: string; collection_id: string }[] = [];
 
   for (const { contactId, tagNames } of assignments) {
     const assignedTagIds = new Set<string>();
@@ -117,7 +117,7 @@ export async function assignImportedContactTags(
       const tagId = tagIdByKey.get(name.trim().toLowerCase());
       if (!tagId || assignedTagIds.has(tagId)) continue;
       assignedTagIds.add(tagId);
-      rows.push({ contact_id: contactId, tag_id: tagId });
+      rows.push({ contact_id: contactId, collection_id: tagId });
     }
   }
 
@@ -128,8 +128,8 @@ export async function assignImportedContactTags(
 
   for (let i = 0; i < rows.length; i += chunkSize) {
     const chunk = rows.slice(i, i + chunkSize);
-    const { error } = await supabase.from('contact_tags').upsert(chunk, {
-      onConflict: 'contact_id,tag_id',
+    const { error } = await supabase.from('collection_members').upsert(chunk, {
+      onConflict: 'contact_id,collection_id',
       ignoreDuplicates: true,
     });
     if (error) throw error;

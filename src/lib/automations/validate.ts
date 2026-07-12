@@ -5,7 +5,7 @@ import type { AutomationTriggerType } from '@/types'
 //
 // Activating a broken automation (e.g. an add_tag step with tag_id="")
 // used to succeed silently — every trigger then produced a failed log
-// row with a cryptic "add_tag needs contact + tag_id" message, and
+// row with a cryptic "add_tag needs contact + collection_id" message, and
 // users often didn't notice until reviewing logs. This module lets
 // the API refuse activation with a useful 400 response instead.
 //
@@ -172,7 +172,7 @@ export function validateTriggerForActivation(
     }
   } else if (triggerType === 'tag_added') {
     if (!nonEmpty(cfg.tag_id)) {
-      issues.push({ path: 'trigger.tag_id', message: 'tag is required' })
+      issues.push({ path: 'trigger.collection_id', message: 'tag is required' })
     }
   }
 

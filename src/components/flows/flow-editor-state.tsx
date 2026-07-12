@@ -181,7 +181,7 @@ export function defaultConfigFor(type: NodeType): Record<string, unknown> {
         false_next: "",
       };
     case "set_tag":
-      return { mode: "add", tag_id: "", next_node_key: "" };
+      return { mode: "add", collection_id: "", next_node_key: "" };
     case "handoff":
       return { note: "" };
     case "end":

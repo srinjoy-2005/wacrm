@@ -188,7 +188,7 @@ export function ImportModal({
 
     if (csvHasTags && accountId) {
       const { data: tags } = await supabase
-        .from('tags')
+        .from('collections')
         .select('name, color')
         .eq('account_id', accountId);
 
