@@ -36,13 +36,13 @@ interface Message {
 interface WebhookLog {
   timestamp: string
   type: string
-  payload: any
+  payload: unknown
   status: 'success' | 'error' | 'pending'
 }
 
 export default function App() {
   // Auth state
-  const [session, setSession] = useState<any>(null)
+  const [session, setSession] = useState<unknown>(null)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [authError, setAuthError] = useState('')
@@ -96,6 +96,7 @@ export default function App() {
       setMessages([])
       setAccountId(null)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session])
 
   // Fetch conversation and messages when contact changes
@@ -103,6 +104,7 @@ export default function App() {
     if (selectedContact) {
       loadConversation(selectedContact)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedContact])
 
   // Real-time listener for messages in the active conversation
@@ -160,8 +162,8 @@ export default function App() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) throw error
-    } catch (err: any) {
-      setAuthError(err.message || 'Login failed')
+    } catch (err: unknown) {
+      setAuthError((err as Error).message || 'Login failed')
     } finally {
       setAuthLoading(false)
     }
@@ -208,13 +210,14 @@ export default function App() {
   const loadConversation = async (contact: Contact) => {
     try {
       // Find or create conversation
-      let { data: conv, error: convError } = await supabase
+      const { data: convData, error: convError } = await supabase
         .from('conversations')
         .select('*')
         .eq('contact_id', contact.id)
         .maybeSingle()
 
       if (convError) throw convError
+      let conv = convData
 
       if (!conv) {
         // Create a conversation if one doesn't exist
@@ -280,12 +283,12 @@ export default function App() {
       setNewContactName('')
       setNewContactPhone('')
       setIsCreatingContact(false)
-    } catch (err: any) {
-      alert('Error creating contact: ' + err.message)
+    } catch (err: unknown) {
+      alert('Error creating contact: ' + (err as Error).message)
     }
   };
 
-  const sendMockWebhook = async (messageType: string, messagePayload: any) => {
+  const sendMockWebhook = async (messageType: string, messagePayload: unknown) => {
     const timestamp = new Date().toISOString()
     const logIndex = logs.length
 
@@ -318,14 +321,14 @@ export default function App() {
       )
       newLog.status = 'success'
       setActiveLog(newLog)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Webhook error:', err)
       setLogs((prev) =>
-        prev.map((l, i) => (prev.length - 1 - i === logIndex ? { ...l, status: 'error', error: err.message } : l))
+        prev.map((l, i) => (prev.length - 1 - i === logIndex ? { ...l, status: 'error', error: (err as Error).message } : l))
       )
       newLog.status = 'error'
-      // @ts-ignore
-      newLog.error = err.message
+      // @ts-expect-error adding error property dynamically
+      newLog.error = (err as Error).message
       setActiveLog(newLog)
     }
   };
@@ -677,13 +680,13 @@ export default function App() {
                               onClick={() => triggerButtonReply('opt_yes', 'Yes, please')}
                               className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-md text-[10px] font-semibold transition-colors"
                             >
-                              "Yes, please"
+                              &quot;Yes, please&quot;
                             </button>
                             <button
                               onClick={() => triggerButtonReply('opt_no', 'No, thanks')}
                               className="px-2.5 py-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 border border-zinc-200 rounded-md text-[10px] font-semibold transition-colors"
                             >
-                              "No, thanks"
+                              &quot;No, thanks&quot;
                             </button>
                           </div>
                         </div>

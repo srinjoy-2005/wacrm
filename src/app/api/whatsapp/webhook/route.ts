@@ -1,7 +1,7 @@
 import { NextResponse, after } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { decrypt, encrypt, isLegacyFormat } from '@/lib/whatsapp/encryption'
-import { getMediaUrl, downloadMedia } from '@/lib/whatsapp/meta-api'
+import { getMediaUrl } from '@/lib/whatsapp/meta-api'
 import { normalizePhone } from '@/lib/whatsapp/phone-utils'
 import { findExistingContact, isUniqueViolation } from '@/lib/contacts/dedupe'
 import { verifyMetaWebhookSignature } from '@/lib/whatsapp/webhook-signature'
@@ -117,8 +117,7 @@ export async function GET(request: Request) {
     // Check if any config's verify_token matches. Also collect the
     // matching row so we can opportunistically upgrade its token to
     // GCM if it was still in the legacy CBC format.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let matchedConfig: any = null
+    let matchedConfig: { id: string; verify_token: string | null } | null = null
     for (const config of configs) {
       if (!config.verify_token) continue
       try {
@@ -273,8 +272,8 @@ async function processWebhook(body: { entry?: WhatsAppWebhookEntry[] }) {
       // operators see the real cause in logs. ≥2 rows shouldn't happen
       // post-migration 013 (UNIQUE constraint), but a row created
       // before the constraint, or a race, would still surface here.
-      let configRows: any[] | null = null
-      let configError: any = null
+      let configRows: Record<string, unknown>[] | null = null
+      let configError: unknown = null
 
       if (process.env.MOCK_WHATSAPP === 'true') {
         const { data, error } = await supabaseAdmin()
