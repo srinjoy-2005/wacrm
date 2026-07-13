@@ -62,3 +62,18 @@ Here is exactly what happens when you push to the `main` branch:
 7. **Verify**: The pipeline hits your new Cloud Run URL to make sure it responds successfully.
 
 If anything goes wrong, you just go to the Cloud Run dashboard and click "Rollback" to the previous revision!
+
+---
+
+## 5. Handling Secrets and Environment Variables
+
+When you run your app locally, you probably use a `.env.local` file to store sensitive passwords and API keys (like your Supabase URL, Anon Key, or Meta API keys). 
+However, **you must never commit this file to GitHub**. So how does GCP get your secrets?
+
+We use **GitHub Secrets** to securely bridge the gap:
+1. You save your sensitive keys inside your GitHub repository settings (**Settings > Secrets and variables > Actions > Repository secrets**).
+2. During the CI/CD pipeline, GitHub Actions securely injects these secrets into two places:
+   - **Build Time (`Dockerfile`)**: For frontend Next.js variables (those starting with `NEXT_PUBLIC_`), the `docker build` step reads them so they can be baked into the client-side React code.
+   - **Run Time (Cloud Run)**: For backend variables (like `ENCRYPTION_KEY`), GitHub Actions securely passes them directly to Google Cloud Run as runtime environment variables.
+
+This ensures your app has all the necessary credentials on GCP to work exactly as it does on your laptop!
