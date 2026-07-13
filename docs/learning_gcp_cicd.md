@@ -70,10 +70,19 @@ If anything goes wrong, you just go to the Cloud Run dashboard and click "Rollba
 When you run your app locally, you probably use a `.env.local` file to store sensitive passwords and API keys (like your Supabase URL, Anon Key, or Meta API keys). 
 However, **you must never commit this file to GitHub**. So how does GCP get your secrets?
 
-We use **GitHub Secrets** to securely bridge the gap:
-1. You save your sensitive keys inside your GitHub repository settings (**Settings > Secrets and variables > Actions > Repository secrets**).
-2. During the CI/CD pipeline, GitHub Actions securely injects these secrets into two places:
-   - **Build Time (`Dockerfile`)**: For frontend Next.js variables (those starting with `NEXT_PUBLIC_`), the `docker build` step reads them so they can be baked into the client-side React code.
-   - **Run Time (Cloud Run)**: For backend variables (like `ENCRYPTION_KEY`), GitHub Actions securely passes them directly to Google Cloud Run as runtime environment variables.
+We use **GitHub Secrets** to securely bridge the gap. But first, it's critical to understand the difference between public and private variables:
 
-This ensures your app has all the necessary credentials on GCP to work exactly as it does on your laptop!
+### Public Frontend Variables (`NEXT_PUBLIC_`)
+Variables like your Supabase URL and Anon Key (`NEXT_PUBLIC_SUPABASE_ANON_KEY`) are **not actually secret**. They are specifically designed to be public so your user's browser can talk to your database. Security is enforced by Supabase Row Level Security (RLS) rules, not by hiding the key.
+Because they must be sent to the browser, the `docker build` step "bakes" them directly into the client-side JavaScript.
+
+### Private Backend Secrets
+Variables like `ENCRYPTION_KEY` and `META_APP_SECRET` are **true secrets**. They are never sent to the browser. They only live securely on the server.
+
+### How they get to GCP
+1. You save your keys inside your GitHub repository settings (**Settings > Secrets and variables > Actions > Repository secrets**).
+2. During the CI/CD pipeline, GitHub Actions securely injects these secrets:
+   - **Build Time**: Injects the `NEXT_PUBLIC_` variables into the Docker build so the frontend can use them.
+   - **Run Time**: Passes the true backend secrets directly to Google Cloud Run as runtime environment variables.
+
+*(Note: For enterprise applications, the industry standard is to store true backend secrets in **GCP Secret Manager** rather than passing them through GitHub. Cloud Run can securely pull secrets directly from Secret Manager at startup!)*
