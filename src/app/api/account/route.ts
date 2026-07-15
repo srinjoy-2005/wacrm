@@ -81,18 +81,30 @@ export async function PATCH(request: Request) {
     // RLS allows this UPDATE because accounts_update requires
     // `is_account_member(id, 'admin')`, and requireRole already
     // guaranteed the caller is admin+.
-    const { data, error } = await ctx.supabase
-      .from("accounts")
-      .update({ name })
-      .eq("id", ctx.accountId)
-      .select("id, name")
-      .single();
-
-    if (error) {
+    let data;
+    try {
+      const { db } = await import('@/db');
+      const { accounts } = await import('@/db/schema');
+      const { eq } = await import('drizzle-orm');
+      
+      const result = await db
+        .update(accounts)
+        .set({ name, updated_at: new Date() })
+        .where(eq(accounts.id, ctx.accountId))
+        .returning({ id: accounts.id, name: accounts.name });
+      data = result[0];
+    } catch (error) {
       console.error("[PATCH /api/account] update error:", error);
       return NextResponse.json(
         { error: "Failed to update account" },
         { status: 500 },
+      );
+    }
+
+    if (!data) {
+      return NextResponse.json(
+        { error: "Account not found" },
+        { status: 404 },
       );
     }
 
