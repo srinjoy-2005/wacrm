@@ -106,6 +106,20 @@ export function keysetFilter(cursor: Cursor | null): string | null {
   return `created_at.lt.${cursor.createdAt},and(created_at.eq.${cursor.createdAt},id.lt.${cursor.id})`;
 }
 
+/** Drizzle equivalent of keysetFilter. */
+export function keysetFilterDrizzle(cursor: Cursor | null, table: any) {
+  if (!cursor) return undefined;
+  const { or, and, lt, eq } = require('drizzle-orm');
+  const dCreatedAt = new Date(cursor.createdAt);
+  return or(
+    lt(table.created_at, dCreatedAt),
+    and(
+      eq(table.created_at, dCreatedAt),
+      lt(table.id, cursor.id)
+    )
+  );
+}
+
 /**
  * Trim an over-fetched result set (query ran with `limit + 1`) down to
  * `limit` and derive the `next_cursor`. When fewer than `limit + 1`

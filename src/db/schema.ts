@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp, varchar, jsonb, boolean, integer } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, timestamp, varchar, jsonb, boolean, integer, unique } from 'drizzle-orm/pg-core';
 
 export const accounts = pgTable('accounts', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -52,4 +52,6 @@ export const collection_members = pgTable('collection_members', {
   contact_id: uuid('contact_id').notNull().references(() => contacts.id, { onDelete: 'cascade' }),
   collection_id: uuid('collection_id').notNull().references(() => collections.id, { onDelete: 'cascade' }),
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-});
+}, (t) => ({
+  unq: unique().on(t.contact_id, t.collection_id),
+}));

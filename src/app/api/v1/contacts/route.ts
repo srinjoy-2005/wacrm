@@ -12,18 +12,19 @@ import { requireApiKey } from '@/lib/auth/api-context';
 import { ok, okList, fail, toApiErrorResponse } from '@/lib/api/v1/respond';
 import {
   parseListParams,
-  keysetFilter,
+  keysetFilterDrizzle,
   buildPage,
 } from '@/lib/api/v1/pagination';
 import {
-  CONTACT_SELECT,
-  serializeContact,
-  findOrCreateContact,
-  setContactTags,
-  getContactById,
-  resolveAuditUserId,
+  findOrCreateContactDrizzle,
+  setContactTagsDrizzle,
+  getContactByIdDrizzle,
+  resolveAuditUserIdDrizzle,
   ContactError,
-} from '@/lib/api/v1/contacts';
+} from '@/lib/api/v1/contacts.drizzle';
+import { db } from '@/db';
+import { contacts, collection_members, collections } from '@/db/schema';
+import { eq, or, ilike, and, desc, sql, inArray } from 'drizzle-orm';
 
 // PostgREST filter values are comma/paren-delimited; strip anything
 // that could break the `.or()` grammar before interpolating a search
@@ -40,54 +41,71 @@ export async function GET(request: Request) {
     const search = sanitizeSearch(url.searchParams.get('search') ?? '');
     const tag = url.searchParams.get('tag');
 
-    // When filtering by tag, add an aliased INNER join on contact_tags
-    // used purely for the WHERE — the parent is kept only if it has the
-    // tag. The main `contact_tags(tags(*))` embed still returns the
-    // contact's FULL tag set for serialization. This filters in one
-    // bounded query (paged by limit+1) instead of pre-fetching an
-    // unbounded id list into an `.in(...)`.
-    const selectClause = tag
-      ? `${CONTACT_SELECT}, tag_filter:contact_tags!inner(tag_id)`
-      : CONTACT_SELECT;
-
-    let query = ctx.supabase
-      .from('contacts')
-      .select(selectClause)
-      .eq('account_id', ctx.accountId);
+    // Build WHERE clauses
+    const whereClauses = [eq(contacts.account_id, ctx.accountId)];
 
     if (search) {
-      query = query.or(`name.ilike.*${search}*,phone.ilike.*${search}*`);
+      whereClauses.push(
+        or(
+          ilike(contacts.name, `%${search}%`),
+          ilike(contacts.phone, `%${search}%`)
+        )!
+      );
     }
 
     if (tag) {
-      query = query.eq('tag_filter.collection_id', tag);
+      whereClauses.push(
+        inArray(
+          contacts.id,
+          db.select({ id: collection_members.contact_id }).from(collection_members).where(eq(collection_members.collection_id, tag))
+        )
+      );
     }
 
-    query = query
-      .order('created_at', { ascending: false })
-      .order('id', { ascending: false })
+    const kf = keysetFilterDrizzle(cursor, contacts);
+    if (kf) whereClauses.push(kf);
+
+    // Drizzle requires an array for and() only if there's >1, but spreading into and() works.
+    const queryResult = await db
+      .select()
+      .from(contacts)
+      .where(and(...whereClauses))
+      .orderBy(desc(contacts.created_at), desc(contacts.id))
       .limit(limit + 1);
 
-    const kf = keysetFilter(cursor);
-    if (kf) query = query.or(kf);
-
-    const { data, error } = await query;
-    if (error) {
-      console.error('[api/v1/contacts] list error:', error);
-      return fail('internal', 'Failed to list contacts', 500);
+    // To serialize, we need to hydrate the tags for the retrieved contacts.
+    const contactIds = queryResult.map(c => c.id);
+    let allTags: any[] = [];
+    if (contactIds.length > 0) {
+      allTags = await db
+        .select({
+          contact_id: collection_members.contact_id,
+          tag: {
+            id: collections.id,
+            name: collections.name,
+            color: collections.color,
+          }
+        })
+        .from(collection_members)
+        .innerJoin(collections, eq(collection_members.collection_id, collections.id))
+        .where(inArray(collection_members.contact_id, contactIds));
     }
 
-    // Cast via unknown: the conditional `selectClause` (with the
-    // tag_filter alias) is a runtime string, so supabase-js can't infer
-    // a row type from it.
-    const { items, nextCursor } = buildPage(
-      (data ?? []) as unknown as Array<{ created_at: string; id: string }>,
-      limit
-    );
-    return okList(
-      items.map((r) => serializeContact(r as Record<string, unknown>)),
-      nextCursor
-    );
+    // Attach tags to contacts
+    const rows = queryResult.map(contact => {
+      const contactTags = allTags
+        .filter(t => t.contact_id === contact.id)
+        .map(t => t.tag);
+      return {
+        ...contact,
+        tags: contactTags,
+        created_at: contact.created_at.toISOString(),
+        updated_at: contact.updated_at.toISOString(),
+      };
+    });
+
+    const { items, nextCursor } = buildPage(rows, limit);
+    return okList(items, nextCursor);
   } catch (err) {
     return toApiErrorResponse(err);
   }
@@ -110,10 +128,9 @@ export async function POST(request: Request) {
       return fail('bad_request', "'phone' is required", 400);
     }
 
-    const auditUserId = await resolveAuditUserId(ctx.supabase, ctx.accountId);
+    const auditUserId = await resolveAuditUserIdDrizzle(ctx.accountId);
 
-    const { id, created } = await findOrCreateContact(
-      ctx.supabase,
+    const { id, created } = await findOrCreateContactDrizzle(
       ctx.accountId,
       auditUserId,
       {
@@ -125,8 +142,7 @@ export async function POST(request: Request) {
     );
 
     if (Array.isArray(body.tags)) {
-      await setContactTags(
-        ctx.supabase,
+      await setContactTagsDrizzle(
         ctx.accountId,
         auditUserId,
         id,
@@ -134,7 +150,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const contact = await getContactById(ctx.supabase, ctx.accountId, id);
+    const contact = await getContactByIdDrizzle(ctx.accountId, id);
     return ok(contact, created ? 201 : 200);
   } catch (err) {
     if (err instanceof ContactError) {

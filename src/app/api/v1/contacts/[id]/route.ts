@@ -11,11 +11,14 @@
 import { requireApiKey } from '@/lib/auth/api-context';
 import { ok, fail, toApiErrorResponse } from '@/lib/api/v1/respond';
 import {
-  getContactById,
-  setContactTags,
-  resolveAuditUserId,
+  getContactByIdDrizzle,
+  setContactTagsDrizzle,
+  resolveAuditUserIdDrizzle,
   ContactError,
-} from '@/lib/api/v1/contacts';
+} from '@/lib/api/v1/contacts.drizzle';
+import { db } from '@/db';
+import { contacts } from '@/db/schema';
+import { eq, and } from 'drizzle-orm';
 
 export async function GET(
   request: Request,
@@ -24,7 +27,7 @@ export async function GET(
   try {
     const ctx = await requireApiKey(request, 'contacts:read');
     const { id } = await params;
-    const contact = await getContactById(ctx.supabase, ctx.accountId, id);
+    const contact = await getContactByIdDrizzle(ctx.accountId, id);
     if (!contact) return fail('not_found', 'Contact not found', 404);
     return ok(contact);
   } catch (err) {
@@ -49,7 +52,7 @@ export async function PATCH(
     }
 
     // Verify the contact is in this account before mutating anything.
-    const existing = await getContactById(ctx.supabase, ctx.accountId, id);
+    const existing = await getContactByIdDrizzle(ctx.accountId, id);
     if (!existing) return fail('not_found', 'Contact not found', 404);
 
     // Build a partial update from the provided scalar fields. A field
@@ -68,22 +71,26 @@ export async function PATCH(
     }
 
     if (Object.keys(updates).length > 0) {
-      updates.updated_at = new Date().toISOString();
-      const { error } = await ctx.supabase
-        .from('contacts')
-        .update(updates)
-        .eq('id', id)
-        .eq('account_id', ctx.accountId);
-      if (error) {
+      updates.updated_at = new Date();
+      try {
+        await db
+          .update(contacts)
+          .set(updates)
+          .where(
+            and(
+              eq(contacts.id, id),
+              eq(contacts.account_id, ctx.accountId)
+            )
+          );
+      } catch (error) {
         console.error('[api/v1/contacts] update error:', error);
         return fail('internal', 'Failed to update contact', 500);
       }
     }
 
     if (Array.isArray(body.tags)) {
-      const auditUserId = await resolveAuditUserId(ctx.supabase, ctx.accountId);
-      await setContactTags(
-        ctx.supabase,
+      const auditUserId = await resolveAuditUserIdDrizzle(ctx.accountId);
+      await setContactTagsDrizzle(
         ctx.accountId,
         auditUserId,
         id,
@@ -91,7 +98,7 @@ export async function PATCH(
       );
     }
 
-    const contact = await getContactById(ctx.supabase, ctx.accountId, id);
+    const contact = await getContactByIdDrizzle(ctx.accountId, id);
     return ok(contact);
   } catch (err) {
     if (err instanceof ContactError) {
