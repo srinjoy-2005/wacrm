@@ -3,7 +3,7 @@
 import { requireRole } from '@/lib/auth/account';
 import { db } from '@/db';
 import { conversations, contacts, whatsapp_config } from '@/db/schema';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, and, desc, sql } from 'drizzle-orm';
 
 function serializeDates(obj: any) {
   if (!obj) return obj;
@@ -25,15 +25,33 @@ export async function getConversationsAction() {
         conversation: conversations,
         contact: contacts,
       })
-      .from(conversations)
-      .leftJoin(contacts, eq(conversations.contact_id, contacts.id))
-      .where(eq(conversations.account_id, ctx.accountId))
-      .orderBy(desc(conversations.last_message_at));
+      .from(contacts)
+      .leftJoin(conversations, eq(contacts.id, conversations.contact_id))
+      .where(eq(contacts.account_id, ctx.accountId))
+      .orderBy(sql`${conversations.last_message_at} DESC NULLS LAST`);
       
-    return data.map(d => ({
-      ...serializeDates(d.conversation),
-      contact: serializeDates(d.contact),
-    }));
+    return data.map(d => {
+      if (d.conversation) {
+        return {
+          ...serializeDates(d.conversation),
+          contact: serializeDates(d.contact),
+        };
+      } else {
+        return {
+          id: `virtual-${d.contact.id}`,
+          account_id: d.contact.account_id,
+          user_id: d.contact.user_id,
+          contact_id: d.contact.id,
+          status: 'pending',
+          assigned_agent_id: null,
+          unread_count: 0,
+          last_message_at: null,
+          created_at: d.contact.created_at?.toISOString() || null,
+          updated_at: d.contact.updated_at?.toISOString() || null,
+          contact: serializeDates(d.contact),
+        };
+      }
+    });
   } catch (error: any) {
     console.error('[getConversationsAction]', error);
     throw new Error('Failed to fetch conversations');
@@ -44,6 +62,31 @@ export async function getConversationByIdAction(id: string) {
   const ctx = await requireRole('viewer');
   
   try {
+    if (id.startsWith('virtual-')) {
+      const contactId = id.replace('virtual-', '');
+      const data = await db
+        .select()
+        .from(contacts)
+        .where(and(eq(contacts.account_id, ctx.accountId), eq(contacts.id, contactId)))
+        .limit(1);
+        
+      if (data.length === 0) return null;
+      const contactObj = data[0];
+      return {
+        id: `virtual-${contactObj.id}`,
+        account_id: contactObj.account_id,
+        user_id: contactObj.user_id,
+        contact_id: contactObj.id,
+        status: 'pending',
+        assigned_agent_id: null,
+        unread_count: 0,
+        last_message_at: null,
+        created_at: contactObj.created_at?.toISOString() || null,
+        updated_at: contactObj.updated_at?.toISOString() || null,
+        contact: serializeDates(contactObj),
+      };
+    }
+
     const data = await db
       .select({
         conversation: conversations,

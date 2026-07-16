@@ -19,6 +19,10 @@ function serializeDates(obj: any) {
 export async function getMessagesAction(conversationId: string) {
   const ctx = await requireRole('viewer');
   
+  if (conversationId.startsWith('virtual-')) {
+    return [];
+  }
+  
   try {
     // Basic authorization check: verify the conversation belongs to this account
     const conv = await db

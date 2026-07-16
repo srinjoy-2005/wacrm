@@ -285,7 +285,7 @@ export function MessageThread({
   // Reset the server-side unread_count to 0 whenever an unread count
   // surfaces on the active conversation.
   useEffect(() => {
-    if (!conversationId || !hasUnread) return;
+    if (!conversationId || conversationId.startsWith('virtual-') || !hasUnread) return;
     updateConversationAction(conversationId, { unread_count: 0 }).catch(error => {
       console.error("Failed to reset unread_count:", error);
     });
@@ -324,7 +324,8 @@ export function MessageThread({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            conversation_id: conversation.id,
+            conversation_id: conversation.id.startsWith('virtual-') ? undefined : conversation.id,
+            contact_id: conversation.contact?.id,
             message_type: "text",
             content_text: text,
             reply_to_message_id: replyToId,
@@ -388,7 +389,8 @@ export function MessageThread({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            conversation_id: conversation.id,
+            conversation_id: conversation.id.startsWith('virtual-') ? undefined : conversation.id,
+            contact_id: conversation.contact?.id,
             message_type: payload.kind,
             media_url: payload.mediaUrl,
             content_text: contentText,
@@ -424,7 +426,7 @@ export function MessageThread({
 
   const handleStatusChange = useCallback(
     async (status: ConversationStatus) => {
-      if (!conversation) return;
+      if (!conversation || conversation.id.startsWith('virtual-')) return;
       try {
         await updateConversationAction(conversation.id, { status });
       } catch (error) {
@@ -471,7 +473,8 @@ export function MessageThread({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            conversation_id: conversation.id,
+            conversation_id: conversation.id.startsWith('virtual-') ? undefined : conversation.id,
+            contact_id: conversation.contact?.id,
             message_type: "template",
             template_name: template.name,
             template_language: template.language,
@@ -619,7 +622,7 @@ export function MessageThread({
 
   const handleAssignChange = useCallback(
     async (agentId: string | null) => {
-      if (!conversation) return;
+      if (!conversation || conversation.id.startsWith('virtual-')) return;
       try {
         await updateConversationAction(conversation.id, { assigned_agent_id: agentId });
       } catch (error) {
@@ -860,7 +863,7 @@ export function MessageThread({
           </div>
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-sm text-muted-foreground">No messages yet</p>
+            <p className="text-sm text-muted-foreground">No messages in database</p>
             <p className="text-xs text-muted-foreground">
               Send a template to start the conversation
             </p>
