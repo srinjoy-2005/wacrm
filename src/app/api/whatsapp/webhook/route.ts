@@ -1,6 +1,10 @@
 import { NextResponse, after } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { decrypt, encrypt, isLegacyFormat } from '@/lib/whatsapp/encryption'
+import { db } from '@/db'
+import { whatsapp_config, messages, broadcast_recipients, message_reactions, conversations, contacts } from '@/db/schema'
+import { eq, and, inArray, desc } from 'drizzle-orm'
+import { resolveConversationByPhoneDrizzle } from '@/lib/whatsapp/resolve-conversation.drizzle';
 import { getMediaUrl } from '@/lib/whatsapp/meta-api'
 import { normalizePhone } from '@/lib/whatsapp/phone-utils'
 import { findExistingContact, isUniqueViolation } from '@/lib/contacts/dedupe'
@@ -102,11 +106,10 @@ export async function GET(request: Request) {
     }
 
     // Fetch all whatsapp configs to check verify tokens
-    const { data: configs, error: configError } = await supabaseAdmin()
-      .from('whatsapp_config')
-      .select('id, verify_token')
-
-    if (configError || !configs) {
+    let configs;
+    try {
+      configs = await db.select({ id: whatsapp_config.id, verify_token: whatsapp_config.verify_token }).from(whatsapp_config);
+    } catch (configError) {
       console.error('Error fetching configs for verification:', configError)
       return NextResponse.json(
         { error: 'Verification failed' },
@@ -134,17 +137,16 @@ export async function GET(request: Request) {
       // Fire-and-forget GCM upgrade. Safe to run on every subscribe
       // since it's a no-op once the column is already GCM.
       if (matchedConfig.verify_token && isLegacyFormat(matchedConfig.verify_token)) {
-        void supabaseAdmin()
-          .from('whatsapp_config')
-          .update({ verify_token: encrypt(verifyToken) })
-          .eq('id', matchedConfig.id)
-          .then(({ error }: { error: unknown }) => {
-            if (error) {
-              console.warn(
-                '[webhook] verify_token GCM upgrade failed:',
-                (error as { message?: string })?.message ?? error,
-              )
-            }
+        void db
+          .update(whatsapp_config)
+          .set({ verify_token: encrypt(verifyToken) })
+          .where(eq(whatsapp_config.id, matchedConfig.id))
+          .then(() => {})
+          .catch((error: unknown) => {
+            console.warn(
+              '[webhook] verify_token GCM upgrade failed:',
+              (error as { message?: string })?.message ?? error,
+            )
           })
       }
       // Return challenge as plain text
@@ -276,17 +278,13 @@ async function processWebhook(body: { entry?: WhatsAppWebhookEntry[] }) {
       let configError: unknown = null
 
       if (process.env.MOCK_WHATSAPP === 'true') {
-        const { data, error } = await supabaseAdmin()
-          .from('whatsapp_config')
-          .select('*')
-          .limit(1)
+        const data = await db.select().from(whatsapp_config).limit(1);
+        const error = null;
         configRows = data
         configError = error
       } else {
-        const { data, error } = await supabaseAdmin()
-          .from('whatsapp_config')
-          .select('*')
-          .eq('phone_number_id', phoneNumberId)
+        const data = await db.select().from(whatsapp_config).where(eq(whatsapp_config.phone_number_id, phoneNumberId));
+        const error = null;
         configRows = data
         configError = error
       }
@@ -394,10 +392,8 @@ async function handleStatusUpdate(status: {
   //    `.select()`: message_id is NOT unique (migration 009 — Meta ids
   //    repeat across numbers), so this updates 0..N rows and must not
   //    assume a single row.
-  const { error: msgErr } = await supabaseAdmin()
-    .from('messages')
-    .update({ status: status.status })
-    .eq('message_id', status.id)
+  let msgErr = null;
+  try { await db.update(messages).set({ status: status.status }).where(eq(messages.message_id, status.id)); } catch(e) { msgErr = e; }
 
   if (msgErr) {
     console.error('Error updating message status:', msgErr)
@@ -413,11 +409,8 @@ async function handleStatusUpdate(status: {
   //    sent/delivered/read/failed counts automatically.
   const tsIso = new Date(parseInt(status.timestamp) * 1000).toISOString()
 
-  const { data: recipient, error: recFetchErr } = await supabaseAdmin()
-    .from('broadcast_recipients')
-    .select('id, status')
-    .eq('whatsapp_message_id', status.id)
-    .maybeSingle()
+  let recFetchErr = null;
+  const recipient = await db.select({ id: broadcast_recipients.id, status: broadcast_recipients.status }).from(broadcast_recipients).where(eq(broadcast_recipients.whatsapp_message_id, status.id)).limit(1).then(r => r[0] || null).catch(e => { recFetchErr = e; return null; });
 
   if (recFetchErr) {
     console.error('Error fetching broadcast recipient:', recFetchErr)
@@ -432,10 +425,8 @@ async function handleStatusUpdate(status: {
     if (status.status === 'delivered') update.delivered_at = tsIso
     if (status.status === 'read') update.read_at = tsIso
 
-    const { error: recUpdateErr } = await supabaseAdmin()
-      .from('broadcast_recipients')
-      .update(update)
-      .eq('id', recipient.id)
+    let recUpdateErr = null;
+    try { await db.update(broadcast_recipients).set(update as any).where(eq(broadcast_recipients.id, recipient.id)); } catch(e) { recUpdateErr = e; }
 
     if (recUpdateErr) {
       console.error('Error updating broadcast recipient status:', recUpdateErr)
@@ -446,12 +437,7 @@ async function handleStatusUpdate(status: {
   //    Runs last so a slow subscriber can't delay the mirrors above.
   //    Bounded to one row (message_id isn't unique) purely to resolve
   //    the owning account for delivery.
-  const { data: msgRow } = await supabaseAdmin()
-    .from('messages')
-    .select('conversation_id, conversations(account_id)')
-    .eq('message_id', status.id)
-    .limit(1)
-    .maybeSingle()
+  const msgRow = await db.select({ conversation_id: messages.conversation_id, account_id: conversations.account_id }).from(messages).innerJoin(conversations, eq(messages.conversation_id, conversations.id)).where(eq(messages.message_id, status.id)).limit(1).then(r => r[0] ? { conversation_id: r[0].conversation_id, conversations: { account_id: r[0].account_id } } : null);
 
   if (msgRow) {
     const conv = msgRow.conversations as { account_id: string } | null
@@ -485,22 +471,14 @@ async function flagBroadcastReplyIfAny(accountId: string, contactId: string) {
     // been replied to yet. Account-scoped so a shared inbox reply
     // marks the broadcast as replied regardless of which teammate
     // sent it.
-    const { data: recs, error } = await supabaseAdmin()
-      .from('broadcast_recipients')
-      .select('id, status, broadcast_id, broadcasts!inner(account_id)')
-      .eq('contact_id', contactId)
-      .eq('broadcasts.account_id', accountId)
-      .in('status', ['sent', 'delivered', 'read'])
-      .order('created_at', { ascending: false })
-      .limit(1)
+    // broadcast is not fully migrated, leaving as supabaseAdmin
+    const { data: recs, error } = await supabaseAdmin().from('broadcast_recipients').select('id, status, broadcast_id, broadcasts!inner(account_id)').eq('contact_id', contactId).eq('broadcasts.account_id', accountId).in('status', ['sent', 'delivered', 'read']).order('created_at', { ascending: false }).limit(1)
 
     if (error || !recs || recs.length === 0) return
 
     const row = recs[0]
-    const { error: updErr } = await supabaseAdmin()
-      .from('broadcast_recipients')
-      .update({ status: 'replied', replied_at: new Date().toISOString() })
-      .eq('id', row.id)
+    let updErr = null;
+    try { await db.update(broadcast_recipients).set({ status: 'replied', replied_at: new Date() }).where(eq(broadcast_recipients.id, row.id)); } catch(e) { updErr = e; }
 
     if (updErr) {
       console.error('Error marking broadcast recipient replied:', updErr)
@@ -519,14 +497,10 @@ async function lookupInternalIdByMetaId(
   metaId: string,
   conversationId: string
 ): Promise<string | null> {
-  const { data, error } = await supabaseAdmin()
-    .from('messages')
-    .select('id')
-    .eq('message_id', metaId)
-    .eq('conversation_id', conversationId)
-    .maybeSingle()
+  let error: any = null;
+  const data = await db.select({ id: messages.id }).from(messages).where(and(eq(messages.message_id, metaId), eq(messages.conversation_id, conversationId))).limit(1).then(r => r[0] || null).catch(e => { error = e; return null; });
   if (error) {
-    console.error('[webhook] lookupInternalIdByMetaId failed:', error.message)
+    console.error('[webhook] lookupInternalIdByMetaId failed:', (error instanceof Error ? error.message : String(error)))
     return null
   }
   return data?.id ?? null
@@ -562,32 +536,18 @@ async function handleReaction(
 
   // Empty emoji = removal (per Meta's Cloud API spec).
   if (!reaction.emoji) {
-    const { error: delError } = await supabaseAdmin()
-      .from('message_reactions')
-      .delete()
-      .eq('message_id', targetInternalId)
-      .eq('actor_type', 'customer')
-      .eq('actor_id', contactId)
+    let delError = null;
+    try { await db.delete(message_reactions).where(and(eq(message_reactions.message_id, targetInternalId), eq(message_reactions.actor_type, 'customer'), eq(message_reactions.actor_id, contactId))); } catch(e) { delError = e; }
     if (delError) {
-      console.error('[webhook] reaction delete failed:', delError.message)
+      console.error('[webhook] reaction delete failed:', (delError instanceof Error ? delError.message : String(delError)))
     }
     return
   }
 
-  const { error: upsertError } = await supabaseAdmin()
-    .from('message_reactions')
-    .upsert(
-      {
-        message_id: targetInternalId,
-        conversation_id: conversationId,
-        actor_type: 'customer',
-        actor_id: contactId,
-        emoji: reaction.emoji,
-      },
-      { onConflict: 'message_id,actor_type,actor_id' }
-    )
+  let upsertError = null;
+  try { await db.insert(message_reactions).values({ message_id: targetInternalId, conversation_id: conversationId, actor_type: 'customer', actor_id: contactId, emoji: reaction.emoji }).onConflictDoUpdate({ target: [message_reactions.message_id, message_reactions.actor_type, message_reactions.actor_id], set: { emoji: reaction.emoji } }); } catch(e) { upsertError = e; }
   if (upsertError) {
-    console.error('[webhook] reaction upsert failed:', upsertError.message)
+    console.error('[webhook] reaction upsert failed:', (upsertError instanceof Error ? upsertError.message : String(upsertError)))
   }
 }
 
@@ -608,23 +568,29 @@ async function processMessage(
   const contactName = contact.profile.name
 
   // Find or create contact
-  const contactOutcome = await findOrCreateContact(
-    accountId,
-    configOwnerUserId,
-    senderPhone,
-    contactName
-  )
-  if (!contactOutcome) return
-  const contactRecord = contactOutcome.contact
+  let conversationId = '';
+  let contactId = '';
+  let contactCreated = false;
+  try {
+    const resolved = await resolveConversationByPhoneDrizzle(
+      accountId,
+      senderPhone,
+      contactName
+    );
+    conversationId = resolved.conversationId;
+    contactId = resolved.contactId;
+    contactCreated = resolved.contactCreated;
+  } catch (err) {
+    console.error('Error resolving conversation:', err);
+    return;
+  }
 
-  // Find or create conversation
-  const convResult = await findOrCreateConversation(
-    accountId,
-    configOwnerUserId,
-    contactRecord.id
-  )
-  if (!convResult) return
-  const conversation = convResult.conversation
+  const contactRecord = { id: contactId };
+  // We don't have conversation unread_count directly from resolveConversationByPhoneDrizzle, so fetch it
+  const conversation = await db.select({ id: conversations.id, unread_count: conversations.unread_count }).from(conversations).where(eq(conversations.id, conversationId)).limit(1).then(r => r[0]);
+  if (!conversation) return;
+  const convResult = { created: contactCreated }; // Approximate conv created with contact created for webhook trigger
+  const contactOutcome = { wasCreated: contactCreated };
 
   // Emit conversation.created as soon as the thread is opened — BEFORE
   // the reaction short-circuit below — so a conversation first opened by
@@ -693,14 +659,12 @@ async function processMessage(
   // BEFORE we insert, so the count is accurate. Covers the case where
   // the contact row already exists (manual add / CSV import) but they've
   // never messaged us before — which new_contact_created wouldn't catch.
-  const { count: priorCustomerMsgCount } = await supabaseAdmin()
-    .from('messages')
-    .select('id', { count: 'exact', head: true })
-    .eq('conversation_id', conversation.id)
-    .eq('sender_type', 'customer')
+  const priorCustomerMsgCountRes = await db.select({ id: messages.id }).from(messages).where(and(eq(messages.conversation_id, conversation.id), eq(messages.sender_type, 'customer'))).limit(1);
+  const priorCustomerMsgCount = priorCustomerMsgCountRes.length;
   const isFirstInboundMessage = (priorCustomerMsgCount ?? 0) === 0
 
-  const { error: msgError } = await supabaseAdmin().from('messages').insert({
+  let msgError = null;
+  try { await db.insert(messages).values({
     conversation_id: conversation.id,
     sender_type: 'customer',
     content_type: contentType,
@@ -708,13 +672,13 @@ async function processMessage(
     media_url: mediaUrl,
     message_id: message.id,
     status: 'delivered',
-    created_at: new Date(parseInt(message.timestamp) * 1000).toISOString(),
+    created_at: new Date(parseInt(message.timestamp) * 1000),
     reply_to_message_id: replyToInternalId,
     // Only populated for content_type='interactive'. Migration 010 added
     // the column; null for every other content_type so existing inserts
     // behave identically.
     interactive_reply_id: interactiveReplyId,
-  })
+  }); } catch(e) { msgError = e; }
 
   if (msgError) {
     console.error('Error inserting message:', msgError)
@@ -722,15 +686,8 @@ async function processMessage(
   }
 
   // Update conversation
-  const { error: convError } = await supabaseAdmin()
-    .from('conversations')
-    .update({
-      last_message_text: contentText || `[${message.type}]`,
-      last_message_at: new Date().toISOString(),
-      unread_count: (conversation.unread_count || 0) + 1,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', conversation.id)
+  let convError = null;
+  try { await db.update(conversations).set({ last_message_text: contentText || `[${message.type}]`, last_message_at: new Date(), unread_count: (conversation.unread_count || 0) + 1, updated_at: new Date() }).where(eq(conversations.id, conversation.id)); } catch(e) { convError = e; }
 
   if (convError) {
     console.error('Error updating conversation:', convError)
@@ -878,7 +835,7 @@ async function parseMessageContent(
     } catch (error) {
       console.error(
         `Failed to verify media ${mediaId} with Meta:`,
-        error instanceof Error ? error.message : error
+        error instanceof Error ? (error instanceof Error ? error.message : String(error)) : error
       )
       return null
     }

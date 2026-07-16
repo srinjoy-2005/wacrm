@@ -5,12 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
 import { toast } from 'sonner';
 import type { Contact, Tag, ContactTag } from '@/types';
-import {
-  findExistingContact,
-  isExactMatch,
-  isUniqueViolation,
-  type ExistingContact,
-} from '@/lib/contacts/dedupe';
+import { checkDuplicateContactAction, getTagsAction, upsertContactAction } from '@/app/actions/contacts';
 import {
   Dialog,
   DialogContent,
@@ -59,7 +54,7 @@ export function ContactForm({
   // DB unique index (migration 022) is the real backstop — this is the
   // friendly heads-up before we get there.
   const [dupMatch, setDupMatch] = useState<
-    { contact: ExistingContact; exact: boolean } | null
+    { contact: Contact; exact: boolean } | null
   >(null);
   const [checkingDup, setCheckingDup] = useState(false);
 
@@ -90,10 +85,10 @@ export function ContactForm({
     }
     setCheckingDup(true);
     try {
-      const existing = await findExistingContact(supabase, accountId, value);
+      const existing = await checkDuplicateContactAction(value);
       setDupMatch(
         existing
-          ? { contact: existing, exact: isExactMatch(existing, value) }
+          ? { contact: existing as unknown as Contact, exact: existing.phone === value }
           : null,
       );
     } finally {
@@ -103,11 +98,12 @@ export function ContactForm({
 
   async function fetchTags() {
     setLoadingTags(true);
-    const { data } = await supabase
-      .from('collections')
-      .select('*')
-      .order('name');
-    if (data) setTags(data);
+    try {
+      const data = await getTagsAction();
+      setTags(data as unknown as Tag[]);
+    } catch (e) {
+      console.error(e);
+    }
     setLoadingTags(false);
   }
 
@@ -137,80 +133,24 @@ export function ContactForm({
     setSaving(true);
 
     try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const user = session?.user;
-      if (!user) throw new Error('Not authenticated');
-      if (!accountId) throw new Error('Your profile is not linked to an account.');
-
-      let contactId = contact?.id;
-
-      if (isEdit && contactId) {
-        const { error } = await supabase
-          .from('contacts')
-          .update({
-            name: name.trim() || null,
-            phone: phone.trim(),
-            email: email.trim() || null,
-            company: company.trim() || null,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', contactId);
-        if (error) throw error;
-      } else {
-        const { data, error } = await supabase
-          .from('contacts')
-          .insert({
-            user_id: user.id,
-            account_id: accountId,
-            name: name.trim() || null,
-            phone: phone.trim(),
-            email: email.trim() || null,
-            company: company.trim() || null,
-          })
-          .select('id')
-          .single();
-        if (error) throw error;
-        contactId = data.id;
-      }
-
-      // Sync tags
-      if (contactId) {
-        await supabase
-          .from('collection_members')
-          .delete()
-          .eq('contact_id', contactId);
-
-        if (selectedTagIds.length > 0) {
-          const tagRows = selectedTagIds.map((collection_id) => ({
-            contact_id: contactId!,
-            collection_id,
-          }));
-          const { error: tagError } = await supabase
-            .from('collection_members')
-            .insert(tagRows);
-          if (tagError) throw tagError;
-        }
-      }
+      await upsertContactAction({
+        id: contact?.id,
+        name: name.trim() || undefined,
+        phone: phone.trim(),
+        email: email.trim() || undefined,
+        company: company.trim() || undefined,
+        tagIds: selectedTagIds,
+      });
 
       toast.success(isEdit ? 'Contact updated' : 'Contact created');
       onOpenChange(false);
       onSaved();
-    } catch (err: unknown) {
-      // The unique index (migration 022) rejects a duplicate phone that
-      // slipped past the on-blur check (race, or a format that
-      // normalizes equal). Surface it as the friendly duplicate notice
-      // and, for new contacts, point the user at the existing record.
-      if (isUniqueViolation(err)) {
+    } catch (err: any) {
+      if (err.message?.includes('already exists')) {
         toast.error('A contact with this phone number already exists');
-        if (!isEdit && accountId) {
-          const existing = await findExistingContact(
-            supabase,
-            accountId,
-            phone.trim(),
-          );
-          if (existing) setDupMatch({ contact: existing, exact: true });
+        if (!isEdit) {
+          const existing = await checkDuplicateContactAction(phone.trim());
+          if (existing) setDupMatch({ contact: existing as unknown as Contact, exact: true });
         }
         return;
       }

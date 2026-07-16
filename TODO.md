@@ -29,3 +29,8 @@ Gotta try the migratoin one step at a time
 IMPORTANT: check current database schema - where it differs from wacrm default
 
 TODO: consider consequences and DB migration structures before pushing nigrations to replace supabase - IMP
+
+-   for now, the wacrm api allows all origins (I just updated the WACRM backend to allow CORS requests to /api/v1/\* so your Simulator can successfully connect to it. Specifically, I:
+
+Updated next.config.ts to include Access-Control-Allow-Origin: \* and related headers for all /api/\* routes.)  
+ **should consder replacing that to some domains**

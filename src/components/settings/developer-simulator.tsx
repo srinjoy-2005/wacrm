@@ -23,6 +23,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { SettingsPanelHead } from './settings-panel-head';
+import { getSimulatorDataAction } from '@/app/actions/simulator';
 
 interface SimpleContact {
   id: string;
@@ -102,46 +103,12 @@ export function DeveloperSimulator() {
   async function loadData() {
     setRefreshing(true);
     try {
-      // Load contacts
-      const { data: contactsData } = await supabase
-        .from('contacts')
-        .select('id, name, phone')
-        .order('name');
-      setContacts(contactsData || []);
-
-      // Load recent outgoing messages
-      const { data: messagesData, error: msgError } = await supabase
-        .from('messages')
-        .select(`
-          id,
-          message_id,
-          content_text,
-          created_at,
-          conversation:conversations (
-            id,
-            contact:contacts (
-              name,
-              phone
-            )
-          )
-        `)
-        .eq('sender_type', 'agent')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (messagesData) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const parsed: SimpleMessage[] = messagesData.map((m: any) => ({
-          id: m.id,
-          message_id: m.message_id,
-          content_text: m.content_text || `[${m.content_type || 'Media'}]`,
-          created_at: m.created_at,
-          recipient_phone: m.conversation?.contact?.phone || 'Unknown',
-          contact_name: m.conversation?.contact?.name || 'Unknown'
-        }));
-        setRecentMessages(parsed);
-        if (parsed.length > 0 && !selectedMessageId) {
-          setSelectedMessageId(parsed[0].message_id || '');
+      const data = await getSimulatorDataAction();
+      if (data) {
+        setContacts(data.contacts);
+        setRecentMessages(data.recentMessages);
+        if (data.recentMessages.length > 0 && !selectedMessageId) {
+          setSelectedMessageId(data.recentMessages[0].message_id || '');
         }
       }
     } catch (err) {

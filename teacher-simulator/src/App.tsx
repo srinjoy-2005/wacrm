@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { supabase } from './lib/supabase'
+
 import {
   Send,
   Smartphone,
@@ -41,19 +41,18 @@ interface WebhookLog {
 }
 
 export default function App() {
-  // Auth state
-  const [session, setSession] = useState<unknown>(null)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [apiKey, setApiKey] = useState(localStorage.getItem('wacrm_api_key') || '')
+  const [session, setSession] = useState<boolean>(!!localStorage.getItem('wacrm_api_key'))
   const [authError, setAuthError] = useState('')
   const [authLoading, setAuthLoading] = useState(false)
+  
+  const API_BASE = 'http://localhost:3000/api/v1'
 
   // CRM State
   const [contacts, setContacts] = useState<Contact[]>([])
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
-  const [accountId, setAccountId] = useState<string | null>(null)
 
   // Input fields
   const [inputText, setInputText] = useState('')
@@ -71,30 +70,15 @@ export default function App() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Fetch initial auth session
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  // Fetch contacts when session is active
+  // Fetch contacts when API key is active
   useEffect(() => {
     if (session) {
       loadContacts()
-      loadUserProfile()
     } else {
       setContacts([])
       setSelectedContact(null)
       setConversationId(null)
       setMessages([])
-      setAccountId(null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session])
@@ -107,47 +91,32 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedContact])
 
-  // Real-time listener for messages in the active conversation
+  // Polling for messages in the active conversation
   useEffect(() => {
-    if (!conversationId) return
+    if (!conversationId || !session) return
 
-    const channel = supabase
-      .channel(`public:messages:conversation_id=eq.${conversationId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `conversation_id=eq.${conversationId}`,
-        },
-        (payload) => {
-          setMessages((prev) => {
-            if (prev.some((m) => m.id === payload.new.id)) return prev
-            return [...prev, payload.new as Message]
-          })
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'messages',
-          filter: `conversation_id=eq.${conversationId}`,
-        },
-        (payload) => {
-          setMessages((prev) =>
-            prev.map((m) => (m.id === payload.new.id ? (payload.new as Message) : m))
-          )
-        }
-      )
-      .subscribe()
+    let intervalId: ReturnType<typeof setInterval>
 
-    return () => {
-      supabase.removeChannel(channel)
+    const pollMessages = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/messages?conversation_id=${conversationId}`, {
+          headers: { Authorization: `Bearer ${apiKey}` }
+        })
+        if (res.ok) {
+          const json = await res.json()
+          setMessages(json.data || [])
+        }
+      } catch (err) {
+        console.error('Failed to poll messages', err)
+      }
     }
-  }, [conversationId])
+
+    // Poll every 1 minute to avoid spamming the logs
+    intervalId = setInterval(pollMessages, 60000)
+    pollMessages() // Initial fetch
+
+    return () => clearInterval(intervalId)
+  }, [conversationId, apiKey, session])
 
   // Auto-scroll to bottom of messages
   useEffect(() => {
@@ -160,8 +129,13 @@ export default function App() {
     setAuthLoading(true)
     setAuthError('')
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) throw error
+      const res = await fetch(`${API_BASE}/contacts`, {
+        headers: { Authorization: `Bearer ${apiKey}` }
+      })
+      if (!res.ok) throw new Error('Invalid API Key')
+      
+      localStorage.setItem('wacrm_api_key', apiKey)
+      setSession(true)
     } catch (err: unknown) {
       setAuthError((err as Error).message || 'Login failed')
     } finally {
@@ -170,84 +144,51 @@ export default function App() {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    localStorage.removeItem('wacrm_api_key')
+    setApiKey('')
+    setSession(false)
   };
 
   const loadContacts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('contacts')
-        .select('*')
-        .order('name', { ascending: true })
-
-      if (error) throw error
-      setContacts(data || [])
-      if (data && data.length > 0 && !selectedContact) {
-        setSelectedContact(data[0])
+      const res = await fetch(`${API_BASE}/contacts`, {
+        headers: { Authorization: `Bearer ${apiKey}` }
+      })
+      if (!res.ok) throw new Error('Failed to load contacts')
+      const json = await res.json()
+      setContacts(json.data || [])
+      if (json.data && json.data.length > 0 && !selectedContact) {
+        setSelectedContact(json.data[0])
       }
     } catch (err) {
       console.error('Error loading contacts:', err)
     }
   };
-  const loadUserProfile = async () => {
-    if (!session?.user?.id) return
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('account_id')
-        .eq('user_id', session.user.id)
-        .single()
-
-      if (error) throw error
-      if (data) {
-        setAccountId(data.account_id)
-      }
-    } catch (err) {
-      console.error('Error loading user profile:', err)
-    }
-  };
 
   const loadConversation = async (contact: Contact) => {
     try {
-      // Find or create conversation
-      const { data: convData, error: convError } = await supabase
-        .from('conversations')
-        .select('*')
-        .eq('contact_id', contact.id)
-        .maybeSingle()
+      // Find or create conversation via API
+      const res = await fetch(`${API_BASE}/conversations`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}` 
+        },
+        body: JSON.stringify({ contact_id: contact.id })
+      })
+      
+      if (!res.ok) throw new Error('Failed to load/create conversation')
+      const json = await res.json()
+      setConversationId(json.data.id)
 
-      if (convError) throw convError
-      let conv = convData
-
-      if (!conv) {
-        // Create a conversation if one doesn't exist
-        const { data: newConv, error: createError } = await supabase
-          .from('conversations')
-          .insert([{ 
-            contact_id: contact.id, 
-            status: 'open',
-            user_id: session.user.id,
-            account_id: contact.account_id
-          }])
-          .select()
-          .single()
-
-        if (createError) throw createError
-        conv = newConv
+      // Fetch messages
+      const msgsRes = await fetch(`${API_BASE}/messages?conversation_id=${json.data.id}`, {
+        headers: { Authorization: `Bearer ${apiKey}` }
+      })
+      if (msgsRes.ok) {
+        const msgsJson = await msgsRes.json()
+        setMessages(msgsJson.data || [])
       }
-
-      setConversationId(conv.id)
-
-      // Fetch last 50 messages
-      const { data: msgs, error: msgsError } = await supabase
-        .from('messages')
-        .select('*')
-        .eq('conversation_id', conv.id)
-        .order('created_at', { ascending: true })
-        .limit(50)
-
-      if (msgsError) throw msgsError
-      setMessages(msgs || [])
     } catch (err) {
       console.error('Error loading conversation:', err)
     }
@@ -265,18 +206,21 @@ export default function App() {
       }
       cleanPhone = '+' + cleanPhone
 
-      const { data, error } = await supabase
-        .from('contacts')
-        .insert([{
+      const res = await fetch(`${API_BASE}/contacts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
           name: newContactName,
           phone: cleanPhone,
-          user_id: session.user.id,
-          account_id: accountId
-        }])
-        .select()
-        .single()
+        })
+      })
 
-      if (error) throw error
+      if (!res.ok) throw new Error('Failed to create contact')
+      const json = await res.json()
+      const data = json.data
 
       setContacts((prev) => [...prev, data].sort((a, b) => a.name.localeCompare(b.name)))
       setSelectedContact(data)
@@ -476,23 +420,14 @@ export default function App() {
             </div>
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Email Address</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm focus:border-emerald-500 outline-none"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Password</label>
+                <label className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">WACRM API Key</label>
                 <input
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
                   className="w-full mt-1 px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm focus:border-emerald-500 outline-none"
                   required
+                  placeholder="wk_..."
                 />
               </div>
               {authError && (

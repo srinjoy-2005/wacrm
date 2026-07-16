@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getMessagesAction } from "@/app/actions/messages";
+import { updateConversationAction } from "@/app/actions/conversations";
 import { useAuth } from "@/hooks/use-auth";
 import { usePresence } from "@/hooks/use-presence";
 import { PresenceDot } from "@/components/presence/presence-dot";
@@ -196,27 +197,10 @@ export function MessageThread({
   }, [isRefreshing, onRefresh]);
   const [replyTo, setReplyTo] = useState<ReplyDraft | null>(null);
 
-  // Profiles are bounded by RLS to rows the current user is allowed to
-  // see — today that's just the current user, but the dropdown keeps the
-  // shape ready for shared-team workspaces without a refactor.
+  // Profiles temporarily disabled since it was using Supabase.
+  // Will be restored when multi-agent logic is fully built out in Drizzle.
   useEffect(() => {
-    let cancelled = false;
-    const supabase = createClient();
-    supabase
-      .from("profiles")
-      .select("*")
-      .order("full_name")
-      .then(({ data, error }) => {
-        if (cancelled) return;
-        if (error) {
-          console.error("Failed to fetch profiles:", error);
-          return;
-        }
-        setProfiles((data as Profile[]) ?? []);
-      });
-    return () => {
-      cancelled = true;
-    };
+    setProfiles([]);
   }, []);
 
   // 24-hour session timer
@@ -261,173 +245,50 @@ export function MessageThread({
   const conversationId = conversation?.id;
   const hasUnread = (conversation?.unread_count ?? 0) > 0;
 
-  // Fetch messages whenever the selected conversation changes. Kept
-  // separate from the unread-reset effect so that incoming messages
-  // arriving while the thread is open don't trigger a full refetch —
-  // they only flip hasUnread, which only the reset effect listens to.
+  // Fetch messages whenever the selected conversation changes, and poll every 3s
   useEffect(() => {
     if (!conversationId) return;
 
-    const supabase = createClient();
     let cancelled = false;
 
-    (async () => {
-      setLoading(true);
-
-      const { data, error } = await supabase
-        .from("messages")
-        .select("*")
-        .eq("conversation_id", conversationId)
-        .order("created_at", { ascending: true });
-
-      if (cancelled) return;
-
-      if (error) {
-        console.error("Failed to fetch messages:", error);
-      } else {
+    const fetchMessages = async () => {
+      try {
+        const data = await getMessagesAction(conversationId);
+        if (cancelled) return;
         onMessagesLoadedRef.current(data ?? []);
+      } catch (error) {
+        console.error("Failed to fetch messages:", error);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
+    };
 
-      if (!cancelled) setLoading(false);
-    })();
+    // Initial fetch
+    setLoading(true);
+    fetchMessages();
+
+    // Setup 3s polling
+    const interval = setInterval(fetchMessages, 3000);
 
     return () => {
       cancelled = true;
-    };
-    // `resyncToken` is included so the parent can force a refetch when
-    // the realtime channel reconnects or the tab regains focus —
-    // realtime is best-effort and any message events sent while the WS
-    // was disconnected or throttled are otherwise lost.
-  }, [conversationId, resyncToken]);
-
-  // Reactions fetch — pulls the current state from the DB. Kept separate
-  // from the channel subscription below so a `resyncToken` bump just
-  // refetches the rows without also tearing down and rebuilding the
-  // realtime channel.
-  useEffect(() => {
-    if (!conversationId) {
-      setReactions([]);
-      return;
-    }
-    const supabase = createClient();
-    let cancelled = false;
-
-    (async () => {
-      const { data, error } = await supabase
-        .from("message_reactions")
-        .select("*")
-        .eq("conversation_id", conversationId);
-      if (cancelled) return;
-      if (error) {
-        console.error("Failed to fetch reactions:", error);
-        return;
-      }
-      setReactions((data as MessageReaction[]) ?? []);
-    })();
-
-    return () => {
-      cancelled = true;
+      clearInterval(interval);
     };
   }, [conversationId, resyncToken]);
 
-  // Reactions realtime subscription per conversation. Subscribing here
-  // (not at the page level) keeps the channel scoped to the visible
-  // conversation and avoids cross-conversation chatter on a busy inbox.
+  // Reactions fetch disabled temporarily as Supabase Realtime is removed.
+  // We can poll them along with messages later if needed.
   useEffect(() => {
-    if (!conversationId) return;
-    const supabase = createClient();
-
-    const channel = supabase
-      .channel(`reactions:${conversationId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "message_reactions",
-          filter: `conversation_id=eq.${conversationId}`,
-        },
-        (payload) => {
-          const row = payload.new as MessageReaction;
-          setReactions((prev) => {
-            if (prev.some((r) => r.id === row.id)) return prev;
-            // Swap any matching optimistic temp row for the real one so
-            // the pill doesn't double up after a successful POST.
-            const tempIdx = prev.findIndex(
-              (r) =>
-                r.id.startsWith("temp-") &&
-                r.message_id === row.message_id &&
-                r.actor_type === row.actor_type &&
-                r.actor_id === row.actor_id,
-            );
-            if (tempIdx >= 0) {
-              const copy = prev.slice();
-              copy[tempIdx] = row;
-              return copy;
-            }
-            return [...prev, row];
-          });
-        },
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "message_reactions",
-          filter: `conversation_id=eq.${conversationId}`,
-        },
-        (payload) => {
-          const row = payload.new as MessageReaction;
-          setReactions((prev) => prev.map((r) => (r.id === row.id ? row : r)));
-        },
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "DELETE",
-          schema: "public",
-          table: "message_reactions",
-          filter: `conversation_id=eq.${conversationId}`,
-        },
-        (payload) => {
-          const old = payload.old as Partial<MessageReaction>;
-          if (!old?.id) return;
-          setReactions((prev) => prev.filter((r) => r.id !== old.id));
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [conversationId]);
-
-  // Clear any in-progress reply draft when the active conversation changes —
-  // a quote pulled from conversation A shouldn't bleed into conversation B.
-  useEffect(() => {
-    setReplyTo(null);
-  }, [conversationId]);
+    setReactions([]);
+  }, [conversationId, resyncToken]);
 
   // Reset the server-side unread_count to 0 whenever an unread count
-  // surfaces on the active conversation — covers both (a) opening a
-  // conversation that had unread messages and (b) new messages arriving
-  // while the user is already viewing the thread (webhook server-bumps
-  // unread_count to N+1; the realtime UPDATE propagates it into the
-  // client, which re-runs this effect and flips it back to 0).
-  //
-  // Guarding on hasUnread prevents the eq-update loop: once unread_count
-  // is 0 the condition is false, so no further UPDATE is issued.
+  // surfaces on the active conversation.
   useEffect(() => {
     if (!conversationId || !hasUnread) return;
-    const supabase = createClient();
-    supabase
-      .from("conversations")
-      .update({ unread_count: 0 })
-      .eq("id", conversationId)
-      .then(({ error }) => {
-        if (error) console.error("Failed to reset unread_count:", error);
-      });
+    updateConversationAction(conversationId, { unread_count: 0 }).catch(error => {
+      console.error("Failed to reset unread_count:", error);
+    });
   }, [conversationId, hasUnread]);
 
   // Auto-scroll to bottom on new messages
@@ -564,13 +425,12 @@ export function MessageThread({
   const handleStatusChange = useCallback(
     async (status: ConversationStatus) => {
       if (!conversation) return;
-
-      const supabase = createClient();
-      await supabase
-        .from("conversations")
-        .update({ status })
-        .eq("id", conversation.id);
-
+      try {
+        await updateConversationAction(conversation.id, { status });
+      } catch (error) {
+        console.error("Failed to update status:", error);
+        return;
+      }
       onStatusChange(conversation.id, status);
     },
     [conversation, onStatusChange]
@@ -760,14 +620,9 @@ export function MessageThread({
   const handleAssignChange = useCallback(
     async (agentId: string | null) => {
       if (!conversation) return;
-
-      const supabase = createClient();
-      const { error } = await supabase
-        .from("conversations")
-        .update({ assigned_agent_id: agentId })
-        .eq("id", conversation.id);
-
-      if (error) {
+      try {
+        await updateConversationAction(conversation.id, { assigned_agent_id: agentId });
+      } catch (error) {
         console.error("Failed to update assignment:", error);
         toast.error("Failed to update assignment");
         return;

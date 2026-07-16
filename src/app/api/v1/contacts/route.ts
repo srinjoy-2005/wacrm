@@ -163,3 +163,7 @@ export async function POST(request: Request) {
     return toApiErrorResponse(err);
   }
 }
+
+export async function OPTIONS() {
+  return new Response(null, { status: 204 });
+}

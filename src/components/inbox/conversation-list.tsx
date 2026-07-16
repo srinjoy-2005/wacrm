@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
 import {
-  CONVERSATION_SELECT,
   matchesContactFilters,
   normalizeConversations,
 } from "@/lib/inbox/conversations";
@@ -20,6 +18,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { getConversationsAction } from "@/app/actions/conversations";
+import { getTagsAction } from "@/app/actions/contacts";
 
 interface ConversationListProps {
   activeConversationId: string | null;
@@ -86,31 +86,18 @@ export function ConversationList({
   });
 
   useEffect(() => {
-    const supabase = createClient();
     let cancelled = false;
 
     (async () => {
-      const { data, error } = await supabase
-        .from("conversations")
-        .select(CONVERSATION_SELECT)
-        .order("last_message_at", { ascending: false });
-
-      if (cancelled) return;
-
-      if (error) {
-        // Supabase errors have non-enumerable properties — log fields explicitly
-        console.error("Failed to fetch conversations:", {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code,
-        });
-        setLoading(false);
-        return;
+      try {
+        const data = await getConversationsAction();
+        if (cancelled) return;
+        onConversationsLoadedRef.current(normalizeConversations(data));
+      } catch (error: any) {
+        console.error("Failed to fetch conversations:", error);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-
-      onConversationsLoadedRef.current(normalizeConversations(data ?? []));
-      setLoading(false);
     })();
 
     return () => {
@@ -124,11 +111,14 @@ export function ConversationList({
   // Tag definitions for the filter picker — loaded once so labels/colours
   // stay stable regardless of which conversations happen to be loaded.
   useEffect(() => {
-    const supabase = createClient();
     let cancelled = false;
     (async () => {
-      const { data } = await supabase.from("tags").select("*").order("name");
-      if (!cancelled && data) setTags(data as Tag[]);
+      try {
+        const data = await getTagsAction();
+        if (!cancelled && data) setTags(data as Tag[]);
+      } catch (e) {
+        console.error(e);
+      }
     })();
     return () => {
       cancelled = true;

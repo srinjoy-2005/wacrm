@@ -1,0 +1,66 @@
+nohup: ignoring input
+
+> wacrm@0.8.0 dev
+> next dev
+
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.255.255.254:3000
+- Environments: .env.local
+✓ Ready in 473ms
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+
+[api/v1] uncategorized error: Error: Failed query: select "id" from "whatsapp_config" where "whatsapp_config"."account_id" = $1 limit $2
+params: cf4082a0-44b7-4338-8fd6-8d447f114dfe,1
+    at async resolveConversationByPhoneDrizzle (src/lib/whatsapp/resolve-conversation.drizzle.ts:33:18)
+    at async POST (src/app/api/v1/messages/route.ts:118:22)
+  31 |   }
+  32 |
+> 33 |   const config = await db
+     |                  ^
+  34 |     .select({ id: whatsapp_config.id })
+  35 |     .from(whatsapp_config)
+  36 |     .where(eq(whatsapp_config.account_id, accountId)) {
+  query: 'select "id" from "whatsapp_config" where "whatsapp_config"."account_id" = $1 limit $2',
+  params: [ 'cf4082a0-44b7-4338-8fd6-8d447f114dfe', 1 ],
+  [cause]: Error [PostgresError]: relation "whatsapp_config" does not exist
+      at ignore-listed frames {
+    severity_local: 'ERROR',
+    severity: 'ERROR',
+    code: '42P01',
+    position: '18',
+    file: 'parse_relation.c',
+    line: '1466',
+    routine: 'parserOpenTable'
+  }
+}
+ POST /api/v1/messages 500 in 5.3s (next.js: 332ms, proxy.ts: 121ms, application-code: 4.8s)
+ POST /api/v1/messages 400 in 609ms (next.js: 10ms, proxy.ts: 14ms, application-code: 585ms)
+[api/v1] uncategorized error: Error: Encrypted token has unrecognised format (expected 1 or 2 colons, got 0)
+    at decrypt (src/lib/whatsapp/encryption.ts:98:9)
+    at sendMessageToConversationDrizzle (src/lib/whatsapp/send-message.drizzle.ts:117:30)
+    at async POST (src/app/api/v1/messages/route.ts:124:20)
+   96 |   }
+   97 |
+>  98 |   throw new Error(
+      |         ^
+   99 |     `Encrypted token has unrecognised format (expected 1 or 2 colons, got ${
+  100 |       parts.length - 1
+  101 |     })`,
+ POST /api/v1/messages 500 in 3.7s (next.js: 4ms, proxy.ts: 7ms, application-code: 3.7s)
+[api/v1] uncategorized error: Error: Encrypted token has unrecognised format (expected 1 or 2 colons, got 3)
+    at decrypt (src/lib/whatsapp/encryption.ts:98:9)
+    at sendMessageToConversationDrizzle (src/lib/whatsapp/send-message.drizzle.ts:117:30)
+    at async POST (src/app/api/v1/messages/route.ts:124:20)
+   96 |   }
+   97 |
+>  98 |   throw new Error(
+      |         ^
+   99 |     `Encrypted token has unrecognised format (expected 1 or 2 colons, got ${
+  100 |       parts.length - 1
+  101 |     })`,
+ POST /api/v1/messages 500 in 2.6s (next.js: 6ms, proxy.ts: 8ms, application-code: 2.6s)
+[Mock WhatsApp Send] text message to 14155550123: Hello from Phase 1.2!
+[flows] pause-on-agent-send failed: Could not find the table 'public.sessions' in the schema cache
+ POST /api/v1/messages 201 in 3.6s (next.js: 5ms, proxy.ts: 7ms, application-code: 3.6s)
+[?25h

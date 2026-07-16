@@ -32,13 +32,39 @@
 // ============================================================
 
 import { requireApiKey } from '@/lib/auth/api-context';
-import { ok, fail, toApiErrorResponse } from '@/lib/api/v1/respond';
-import { resolveConversationByPhone } from '@/lib/whatsapp/resolve-conversation';
+import { ok, okList, fail, toApiErrorResponse } from '@/lib/api/v1/respond';
+import { resolveConversationByPhoneDrizzle } from '@/lib/whatsapp/resolve-conversation.drizzle';
+import { sendMessageToConversationDrizzle } from '@/lib/whatsapp/send-message.drizzle';
 import {
-  sendMessageToConversation,
   validateSendMessageParams,
   SendMessageError,
 } from '@/lib/whatsapp/send-message';
+import { db } from '@/db';
+import { messages } from '@/db/schema';
+import { eq, desc } from 'drizzle-orm';
+
+export async function GET(request: Request) {
+  try {
+    const ctx = await requireApiKey(request, 'conversations:read');
+    const url = new URL(request.url);
+    const conversationId = url.searchParams.get('conversation_id');
+
+    if (!conversationId) {
+      return fail('bad_request', "'conversation_id' is required", 400);
+    }
+
+    const data = await db
+      .select()
+      .from(messages)
+      .where(eq(messages.conversation_id, conversationId))
+      .orderBy(desc(messages.created_at))
+      .limit(50);
+
+    return okList((data ?? []).reverse(), null); // Return chronologically
+  } catch (err) {
+    return toApiErrorResponse(err);
+  }
+}
 
 export async function POST(request: Request) {
   try {
@@ -89,15 +115,13 @@ export async function POST(request: Request) {
     // Find-or-create the conversation for this phone, then send. Both
     // steps share `SendMessageError`, so one catch maps the whole
     // pipeline to the envelope.
-    const resolved = await resolveConversationByPhone(
-      ctx.supabase,
+    const resolved = await resolveConversationByPhoneDrizzle(
       ctx.accountId,
       to,
       typeof body.name === 'string' ? body.name : null
     );
 
-    const result = await sendMessageToConversation(
-      ctx.supabase,
+    const result = await sendMessageToConversationDrizzle(
       ctx.accountId,
       {
         conversationId: resolved.conversationId,
@@ -133,4 +157,8 @@ export async function POST(request: Request) {
     }
     return toApiErrorResponse(err);
   }
+}
+
+export async function OPTIONS() {
+  return new Response(null, { status: 204 });
 }

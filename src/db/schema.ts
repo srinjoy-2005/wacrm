@@ -55,3 +55,100 @@ export const collection_members = pgTable('collection_members', {
 }, (t) => ({
   unq: unique().on(t.contact_id, t.collection_id),
 }));
+
+// ============================================================
+// Phase 1.2 Messaging Schema
+// ============================================================
+
+export const whatsapp_config = pgTable('whatsapp_config', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  user_id: uuid('user_id').notNull(),
+  account_id: uuid('account_id').notNull().references(() => accounts.id),
+  phone_number_id: text('phone_number_id').notNull().unique(),
+  waba_id: text('waba_id'),
+  access_token: text('access_token').notNull(),
+  verify_token: text('verify_token'),
+  status: text('status').default('disconnected').notNull(),
+  connected_at: timestamp('connected_at', { withTimezone: true }),
+  registered_at: timestamp('registered_at', { withTimezone: true }),
+  subscribed_apps_at: timestamp('subscribed_apps_at', { withTimezone: true }),
+  last_registration_error: text('last_registration_error'),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const conversations = pgTable('conversations', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  user_id: uuid('user_id').notNull(),
+  account_id: uuid('account_id').notNull().references(() => accounts.id),
+  contact_id: uuid('contact_id').notNull().references(() => contacts.id, { onDelete: 'cascade' }),
+  status: text('status').default('open').notNull(),
+  assigned_agent_id: uuid('assigned_agent_id'),
+  last_message_text: text('last_message_text'),
+  last_message_at: timestamp('last_message_at', { withTimezone: true }),
+  unread_count: integer('unread_count').default(0).notNull(),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+}, (t) => ({
+  unq: unique().on(t.account_id, t.contact_id),
+}));
+
+export const messages = pgTable('messages', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  conversation_id: uuid('conversation_id').notNull().references(() => conversations.id, { onDelete: 'cascade' }),
+  sender_type: text('sender_type').notNull(),
+  sender_id: uuid('sender_id'),
+  content_type: text('content_type').notNull(),
+  content_text: text('content_text'),
+  media_url: text('media_url'),
+  template_name: text('template_name'),
+  message_id: text('message_id'), // Meta's WA message ID
+  status: text('status').default('sending').notNull(),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  reply_to_message_id: uuid('reply_to_message_id'),
+  interactive_reply_id: text('interactive_reply_id'),
+});
+
+export const message_reactions = pgTable('message_reactions', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  message_id: uuid('message_id').notNull().references(() => messages.id, { onDelete: 'cascade' }),
+  conversation_id: uuid('conversation_id').notNull().references(() => conversations.id, { onDelete: 'cascade' }),
+  actor_type: text('actor_type').notNull(),
+  actor_id: uuid('actor_id'),
+  emoji: text('emoji').notNull(),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const broadcasts = pgTable('broadcasts', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  user_id: uuid('user_id').notNull(),
+  account_id: uuid('account_id').notNull().references(() => accounts.id),
+  name: text('name').notNull(),
+  template_name: text('template_name').notNull(),
+  template_language: text('template_language').notNull(),
+  template_variables: jsonb('template_variables'),
+  audience_filter: jsonb('audience_filter'),
+  scheduled_at: timestamp('scheduled_at', { withTimezone: true }),
+  status: text('status').default('draft').notNull(),
+  total_recipients: integer('total_recipients').default(0).notNull(),
+  sent_count: integer('sent_count').default(0).notNull(),
+  delivered_count: integer('delivered_count').default(0).notNull(),
+  read_count: integer('read_count').default(0).notNull(),
+  replied_count: integer('replied_count').default(0).notNull(),
+  failed_count: integer('failed_count').default(0).notNull(),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const broadcast_recipients = pgTable('broadcast_recipients', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  broadcast_id: uuid('broadcast_id').notNull().references(() => broadcasts.id, { onDelete: 'cascade' }),
+  contact_id: uuid('contact_id').references(() => contacts.id, { onDelete: 'set null' }),
+  status: text('status').default('pending').notNull(),
+  sent_at: timestamp('sent_at', { withTimezone: true }),
+  delivered_at: timestamp('delivered_at', { withTimezone: true }),
+  read_at: timestamp('read_at', { withTimezone: true }),
+  replied_at: timestamp('replied_at', { withTimezone: true }),
+  error_message: text('error_message'),
+  whatsapp_message_id: text('whatsapp_message_id'),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});

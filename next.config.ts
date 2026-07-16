@@ -103,7 +103,12 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        headers: [{ key: "Cache-Control", value: "no-store" }],
+        headers: [
+          { key: "Cache-Control", value: "no-store" },
+          { key: "Access-Control-Allow-Origin", value: "http://localhost:3001" },
+          { key: "Access-Control-Allow-Methods", value: "GET, POST, PUT, DELETE, OPTIONS" },
+          { key: "Access-Control-Allow-Headers", value: "Content-Type, Authorization, x-hub-signature-256" }
+        ],
       },
       {
         source: "/:path((?!_next/static|_next/image|api).*)",
