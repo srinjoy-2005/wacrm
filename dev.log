@@ -1,4 +1,3 @@
-nohup: ignoring input
 
 > wacrm@0.8.0 dev
 > next dev
@@ -7,60 +6,1260 @@ nohup: ignoring input
 - Local:         http://localhost:3000
 - Network:       http://10.255.255.254:3000
 - Environments: .env.local
-✓ Ready in 473ms
+✓ Ready in 924ms
+⚠ Slow filesystem detected. The benchmark took 251ms. If /home/iamsrinjoy/random_stuff/wacrm/.next/dev is a network drive, consider moving it to a local folder.
+See more: https://nextjs.org/docs/app/guides/local-development
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
 
-[api/v1] uncategorized error: Error: Failed query: select "id" from "whatsapp_config" where "whatsapp_config"."account_id" = $1 limit $2
-params: cf4082a0-44b7-4338-8fd6-8d447f114dfe,1
-    at async resolveConversationByPhoneDrizzle (src/lib/whatsapp/resolve-conversation.drizzle.ts:33:18)
-    at async POST (src/app/api/v1/messages/route.ts:118:22)
-  31 |   }
-  32 |
-> 33 |   const config = await db
-     |                  ^
-  34 |     .select({ id: whatsapp_config.id })
-  35 |     .from(whatsapp_config)
-  36 |     .where(eq(whatsapp_config.account_id, accountId)) {
-  query: 'select "id" from "whatsapp_config" where "whatsapp_config"."account_id" = $1 limit $2',
-  params: [ 'cf4082a0-44b7-4338-8fd6-8d447f114dfe', 1 ],
-  [cause]: Error [PostgresError]: relation "whatsapp_config" does not exist
+ GET /dashboard 200 in 2.4s (next.js: 278ms, proxy.ts: 1619ms, application-code: 498ms)
+ GET /icon 200 in 438ms (proxy.ts: 157ms)
+[next-auth][warn][NEXTAUTH_URL] 
+https://next-auth.js.org/warnings#nextauth_url
+[next-auth][warn][NO_SECRET] 
+https://next-auth.js.org/warnings#no_secret
+ GET /api/auth/session 200 in 1557ms (next.js: 986ms, proxy.ts: 535ms, application-code: 37ms)
+ GET /dashboard 200 in 198ms (next.js: 12ms, proxy.ts: 170ms, application-code: 16ms)
+ GET /dashboard 200 in 191ms (next.js: 4ms, proxy.ts: 162ms, application-code: 25ms)
+ GET /login 200 in 157ms (next.js: 26ms, proxy.ts: 8ms, application-code: 123ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 130ms (next.js: 113ms, proxy.ts: 11ms, application-code: 6ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 3.0s (next.js: 14ms, proxy.ts: 14ms, application-code: 3.0s)
+ GET /login 200 in 99ms (next.js: 13ms, proxy.ts: 4ms, application-code: 81ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 31ms (next.js: 11ms, proxy.ts: 11ms, application-code: 9ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 679ms (next.js: 3ms, proxy.ts: 3ms, application-code: 673ms)
+ GET / 307 in 114ms (next.js: 41ms, proxy.ts: 5ms, application-code: 68ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 15ms (next.js: 4ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1438ms (next.js: 3ms, proxy.ts: 3ms, application-code: 1432ms)
+ HEAD /login 200 in 82ms (next.js: 22ms, proxy.ts: 10ms, application-code: 50ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 21ms (next.js: 10ms, proxy.ts: 6ms, application-code: 4ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1904ms (next.js: 2ms, proxy.ts: 4ms, application-code: 1898ms)
+ GET /dashboard 200 in 999ms (next.js: 8ms, proxy.ts: 926ms, application-code: 65ms)
+ GET /icon 200 in 173ms (proxy.ts: 151ms)
+ GET /api/auth/session 200 in 585ms (next.js: 41ms, proxy.ts: 523ms, application-code: 21ms)
+ GET /dashboard 200 in 167ms (next.js: 4ms, proxy.ts: 149ms, application-code: 13ms)
+ GET /dashboard 200 in 204ms (next.js: 16ms, proxy.ts: 157ms, application-code: 31ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 23ms (next.js: 7ms, proxy.ts: 10ms, application-code: 6ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 988ms (next.js: 7ms, proxy.ts: 6ms, application-code: 976ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 26ms (next.js: 8ms, proxy.ts: 13ms, application-code: 4ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 682ms (next.js: 3ms, proxy.ts: 6ms, application-code: 673ms)
+ GET / 307 in 704ms (next.js: 9ms, proxy.ts: 603ms, application-code: 91ms)
+ GET /dashboard 200 in 229ms (next.js: 3ms, proxy.ts: 155ms, application-code: 70ms)
+ GET /api/auth/session 200 in 188ms (next.js: 30ms, proxy.ts: 146ms, application-code: 12ms)
+ GET /dashboard 200 in 161ms (next.js: 3ms, proxy.ts: 149ms, application-code: 9ms)
+ GET /dashboard 200 in 174ms (next.js: 5ms, proxy.ts: 160ms, application-code: 9ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 15ms (next.js: 5ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1199ms (next.js: 7ms, proxy.ts: 5ms, application-code: 1187ms)
+ GET / 307 in 101ms (next.js: 9ms, proxy.ts: 10ms, application-code: 83ms)
+ GET /login 200 in 63ms (next.js: 5ms, proxy.ts: 3ms, application-code: 55ms)
+ GET /icon 200 in 18ms (proxy.ts: 4ms)
+ GET /signup 200 in 2.5s (next.js: 2.4s, proxy.ts: 5ms, application-code: 43ms)
+ GET /icon 200 in 34ms (proxy.ts: 9ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 16ms (next.js: 3ms, proxy.ts: 6ms, application-code: 7ms)
+⨯ Error: Failed query: select "id", "user_id", "full_name", "email", "avatar_url", "hashed_password", "role", "account_id", "account_role", "beta_features", "created_at" from "profiles" where "profiles"."email" = $1 limit $2
+params: srinjoy@mail.com,1
+    at async signUpAction (src/app/actions/auth.ts:45:20)
+  43 |
+  44 | export async function signUpAction(data: { email: string; password: string; fullName: stri...
+> 45 |   const existing = await db
+     |                    ^
+  46 |     .select()
+  47 |     .from(profiles)
+  48 |     .where(eq(profiles.email, data.email)) {
+  query: 'select "id", "user_id", "full_name", "email", "avatar_url", "hashed_password", "role", "account_id", "account_role", "beta_features", "created_at" from "profiles" where "profiles"."email" = $1 limit $2',
+  params: [ 'srinjoy@mail.com', 1 ],
+  digest: '3690282237',
+  [cause]: Error [PostgresError]: column "hashed_password" does not exist
       at ignore-listed frames {
     severity_local: 'ERROR',
     severity: 'ERROR',
-    code: '42P01',
-    position: '18',
+    code: '42703',
+    position: '61',
     file: 'parse_relation.c',
-    line: '1466',
-    routine: 'parserOpenTable'
+    line: '3822',
+    routine: 'errorMissingColumn'
   }
 }
- POST /api/v1/messages 500 in 5.3s (next.js: 332ms, proxy.ts: 121ms, application-code: 4.8s)
- POST /api/v1/messages 400 in 609ms (next.js: 10ms, proxy.ts: 14ms, application-code: 585ms)
-[api/v1] uncategorized error: Error: Encrypted token has unrecognised format (expected 1 or 2 colons, got 0)
-    at decrypt (src/lib/whatsapp/encryption.ts:98:9)
-    at sendMessageToConversationDrizzle (src/lib/whatsapp/send-message.drizzle.ts:117:30)
-    at async POST (src/app/api/v1/messages/route.ts:124:20)
-   96 |   }
-   97 |
->  98 |   throw new Error(
-      |         ^
-   99 |     `Encrypted token has unrecognised format (expected 1 or 2 colons, got ${
-  100 |       parts.length - 1
-  101 |     })`,
- POST /api/v1/messages 500 in 3.7s (next.js: 4ms, proxy.ts: 7ms, application-code: 3.7s)
-[api/v1] uncategorized error: Error: Encrypted token has unrecognised format (expected 1 or 2 colons, got 3)
-    at decrypt (src/lib/whatsapp/encryption.ts:98:9)
-    at sendMessageToConversationDrizzle (src/lib/whatsapp/send-message.drizzle.ts:117:30)
-    at async POST (src/app/api/v1/messages/route.ts:124:20)
-   96 |   }
-   97 |
->  98 |   throw new Error(
-      |         ^
-   99 |     `Encrypted token has unrecognised format (expected 1 or 2 colons, got ${
-  100 |       parts.length - 1
-  101 |     })`,
- POST /api/v1/messages 500 in 2.6s (next.js: 6ms, proxy.ts: 8ms, application-code: 2.6s)
-[Mock WhatsApp Send] text message to 14155550123: Hello from Phase 1.2!
-[flows] pause-on-agent-send failed: Could not find the table 'public.sessions' in the schema cache
- POST /api/v1/messages 201 in 3.6s (next.js: 5ms, proxy.ts: 7ms, application-code: 3.6s)
-[?25h
+ POST /signup 500 in 2.4s (next.js: 4ms, proxy.ts: 14ms, application-code: 2.4s)
+  └─ ƒ signUpAction({"email":"srinjoy@mail.com","fullName":"Srinjoy Mukherjee","password":"123456"}) in 1805ms src/app/actions/auth.ts
+[browser] ⨯ unhandledRejection: Error: Failed query: select "id", "user_id", "full_name", "email", "avatar_url", "hashed_password", "role", "account_id", "account_role", "beta_features", "created_at" from "profiles" where "profiles"."email" = $1 limit $2
+params: srinjoy@mail.com,1
+    at  signUpAction (src/app/actions/auth.ts:45:20)
+  43 |
+  44 | export async function signUpAction(data: { email: string; password: string; fullName: stri...
+> 45 |   const existing = await db
+     |                    ^
+  46 |     .select()
+  47 |     .from(profiles)
+  48 |     .where(eq(profiles.email, data.email))
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1692ms (next.js: 3ms, proxy.ts: 3ms, application-code: 1686ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 29ms (next.js: 8ms, proxy.ts: 16ms, application-code: 5ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1037ms (next.js: 3ms, proxy.ts: 5ms, application-code: 1030ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 21ms (next.js: 6ms, proxy.ts: 11ms, application-code: 5ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1625ms (next.js: 3ms, proxy.ts: 4ms, application-code: 1618ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 18ms (next.js: 8ms, proxy.ts: 6ms, application-code: 4ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1451ms (next.js: 3ms, proxy.ts: 6ms, application-code: 1442ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 22ms (next.js: 6ms, proxy.ts: 9ms, application-code: 6ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 871ms (next.js: 4ms, proxy.ts: 3ms, application-code: 864ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 20ms (next.js: 8ms, proxy.ts: 6ms, application-code: 6ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1112ms (next.js: 3ms, proxy.ts: 8ms, application-code: 1101ms)
+ GET /signup 200 in 195ms (next.js: 14ms, proxy.ts: 7ms, application-code: 174ms)
+ GET /icon 200 in 29ms (proxy.ts: 6ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 20ms (next.js: 8ms, proxy.ts: 6ms, application-code: 7ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1080ms (next.js: 4ms, proxy.ts: 6ms, application-code: 1070ms)
+ POST /signup 200 in 1147ms (next.js: 5ms, proxy.ts: 6ms, application-code: 1135ms)
+  └─ ƒ signUpAction({"email":"ritam@email.com","fullName":"Ritam","password":"123456"}) in 1111ms src/app/actions/auth.ts
+ GET /api/auth/providers 200 in 63ms (next.js: 39ms, proxy.ts: 4ms, application-code: 20ms)
+ GET /api/auth/csrf 200 in 23ms (next.js: 6ms, proxy.ts: 5ms, application-code: 13ms)
+ POST /api/auth/callback/credentials 200 in 451ms (next.js: 8ms, proxy.ts: 6ms, application-code: 437ms)
+ GET /login 200 in 70ms (next.js: 5ms, proxy.ts: 5ms, application-code: 59ms)
+ GET /icon 200 in 19ms (proxy.ts: 4ms)
+ GET /api/auth/providers 200 in 52ms (next.js: 35ms, proxy.ts: 4ms, application-code: 13ms)
+ GET /api/auth/csrf 200 in 26ms (next.js: 9ms, proxy.ts: 6ms, application-code: 11ms)
+ POST /api/auth/callback/credentials 200 in 486ms (next.js: 10ms, proxy.ts: 41ms, application-code: 434ms)
+ GET /login 200 in 28ms (next.js: 7ms, proxy.ts: 10ms, application-code: 11ms)
+ GET /login 200 in 89ms (next.js: 10ms, proxy.ts: 8ms, application-code: 71ms)
+ GET /icon 200 in 53ms (proxy.ts: 21ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 20ms (next.js: 6ms, proxy.ts: 7ms, application-code: 7ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1187ms (next.js: 6ms, proxy.ts: 4ms, application-code: 1176ms)
+ GET /api/auth/providers 200 in 53ms (next.js: 37ms, proxy.ts: 5ms, application-code: 11ms)
+ GET /api/auth/csrf 200 in 26ms (next.js: 10ms, proxy.ts: 6ms, application-code: 11ms)
+ POST /api/auth/callback/credentials 401 in 390ms (next.js: 15ms, proxy.ts: 43ms, application-code: 332ms)
+ GET /api/auth/providers 200 in 66ms (next.js: 35ms, proxy.ts: 11ms, application-code: 19ms)
+ GET /api/auth/csrf 200 in 37ms (next.js: 21ms, proxy.ts: 4ms, application-code: 12ms)
+ POST /api/auth/callback/credentials 200 in 466ms (next.js: 19ms, proxy.ts: 19ms, application-code: 427ms)
+ GET /login 200 in 51ms (next.js: 13ms, proxy.ts: 3ms, application-code: 35ms)
+ GET /login 200 in 41ms (next.js: 4ms, proxy.ts: 8ms, application-code: 29ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 21ms (next.js: 13ms, proxy.ts: 5ms, application-code: 4ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1095ms (next.js: 5ms, proxy.ts: 9ms, application-code: 1082ms)
+ GET /login 200 in 63ms (next.js: 3ms, proxy.ts: 4ms, application-code: 56ms)
+ GET /icon 200 in 21ms (proxy.ts: 5ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 32ms (next.js: 12ms, proxy.ts: 10ms, application-code: 10ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1577ms (next.js: 5ms, proxy.ts: 5ms, application-code: 1567ms)
+ GET /login 200 in 161ms (next.js: 12ms, proxy.ts: 20ms, application-code: 129ms)
+ GET /icon 200 in 33ms (proxy.ts: 10ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 23ms (next.js: 5ms, proxy.ts: 9ms, application-code: 9ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 725ms (next.js: 4ms, proxy.ts: 6ms, application-code: 715ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 25ms (next.js: 6ms, proxy.ts: 12ms, application-code: 7ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 933ms (next.js: 3ms, proxy.ts: 3ms, application-code: 927ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 25ms (next.js: 5ms, proxy.ts: 13ms, application-code: 7ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1191ms (next.js: 3ms, proxy.ts: 3ms, application-code: 1184ms)
+ GET /api/auth/providers 200 in 66ms (next.js: 47ms, proxy.ts: 6ms, application-code: 13ms)
+ GET /api/auth/csrf 200 in 19ms (next.js: 7ms, proxy.ts: 5ms, application-code: 7ms)
+ POST /api/auth/callback/credentials 200 in 474ms (next.js: 7ms, proxy.ts: 42ms, application-code: 426ms)
+ GET /login 200 in 46ms (next.js: 19ms, proxy.ts: 4ms, application-code: 22ms)
+ GET /login 200 in 33ms (next.js: 9ms, proxy.ts: 11ms, application-code: 13ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 23ms (next.js: 9ms, proxy.ts: 10ms, application-code: 4ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1018ms (next.js: 3ms, proxy.ts: 6ms, application-code: 1008ms)
+✓ Compiled in 2.7s
+[next-auth][error][NO_SECRET] 
+https://next-auth.js.org/errors#no_secret
+[next-auth][warn][NEXTAUTH_URL] 
+https://next-auth.js.org/warnings#nextauth_url
+[next-auth][warn][NO_SECRET] 
+https://next-auth.js.org/warnings#no_secret
+ GET /api/auth/error?error=Configuration 500 in 243ms (next.js: 208ms, application-code: 36ms)
+ GET /login 200 in 662ms (next.js: 107ms, application-code: 555ms)
+ GET /login 200 in 430ms (next.js: 4ms, application-code: 426ms)
+ GET /login 200 in 408ms (next.js: 5ms, application-code: 403ms)
+ GET /api/auth/error?error=Configuration 500 in 26ms (next.js: 5ms, application-code: 20ms)
+ GET /login 200 in 147ms (next.js: 8ms, application-code: 139ms)
+ GET /login 200 in 95ms (next.js: 5ms, application-code: 91ms)
+ GET /api/auth/error?error=Configuration 500 in 18ms (next.js: 11ms, application-code: 7ms)
+[next-auth][error][NO_SECRET] 
+https://next-auth.js.org/errors#no_secret
+ GET /api/auth/error?error=Configuration 500 in 19ms (next.js: 4ms, application-code: 15ms)
+[next-auth][error][NO_SECRET] 
+https://next-auth.js.org/errors#no_secret
+ GET /api/auth/error?error=Configuration 500 in 17ms (next.js: 4ms, application-code: 13ms)
+[next-auth][error][NO_SECRET] 
+https://next-auth.js.org/errors#no_secret
+ GET /api/auth/error?error=Configuration 500 in 19ms (next.js: 2ms, application-code: 17ms)
+ GET /api/auth/error?error=Configuration 200 in 15ms (next.js: 3ms, application-code: 12ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 114ms (next.js: 107ms, application-code: 7ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 2.9s (next.js: 1850µs, application-code: 2.9s)
+ GET /login 200 in 274ms (next.js: 6ms, application-code: 268ms)
+ GET /icon 200 in 394ms
+ GET /api/auth/providers 200 in 42ms (next.js: 30ms, application-code: 12ms)
+ GET /api/auth/csrf 200 in 14ms (next.js: 3ms, application-code: 11ms)
+ POST /api/auth/callback/credentials 200 in 480ms (next.js: 3ms, application-code: 477ms)
+ GET /login 200 in 17ms (next.js: 6ms, application-code: 11ms)
+[next-auth][error][NO_SECRET] 
+https://next-auth.js.org/errors#no_secret
+ GET /api/auth/error?error=Configuration 500 in 18ms (next.js: 5ms, application-code: 13ms)
+ OPTIONS /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 204 in 8ms (next.js: 4ms, application-code: 4ms)
+ GET /api/v1/messages?conversation_id=a9105b8d-1e6e-4879-a73d-0449e8b0969d 200 in 1073ms (next.js: 3ms, application-code: 1070ms)
+  Reload env: .env.local
+ GET /login 200 in 172ms (next.js: 105ms, application-code: 67ms)
+ OPTIONS /api/v1/contacts 204 in 215ms (next.js: 198ms, application-code: 17ms)
+ OPTIONS /api/v1/contacts 204 in 226ms (next.js: 222ms, application-code: 4ms)
+ GET /api/v1/contacts 200 in 2.6s (next.js: 13ms, application-code: 2.5s)
+ OPTIONS /api/v1/conversations 204 in 81ms (next.js: 76ms, application-code: 5ms)
+ GET /api/v1/contacts 200 in 971ms (next.js: 6ms, application-code: 965ms)
+ POST /api/v1/conversations 200 in 1131ms (next.js: 2ms, application-code: 1129ms)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 66ms (next.js: 60ms, application-code: 6ms)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 16ms (next.js: 12ms, application-code: 4ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 512ms (next.js: 4ms, application-code: 508ms)
+ POST /api/v1/conversations 200 in 2.7s (next.js: 1873µs, application-code: 2.7s)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 515ms (next.js: 10ms, application-code: 505ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 484ms (next.js: 4ms, application-code: 480ms)
+ GET /login 200 in 309ms (next.js: 4ms, application-code: 305ms)
+ GET /icon 200 in 321ms
+ GET /api/auth/providers 200 in 288ms (next.js: 213ms, application-code: 75ms)
+ GET /api/auth/csrf 200 in 32ms (next.js: 6ms, application-code: 26ms)
+ POST /api/auth/callback/credentials 200 in 506ms (next.js: 6ms, application-code: 500ms)
+ GET /api/auth/error?error=Configuration 500 in 13ms (next.js: 3ms, application-code: 10ms)
+ GET /api/auth/error?error=Configuration 500 in 11ms (next.js: 4ms, application-code: 7ms)
+ GET /dashboard 200 in 261ms (next.js: 113ms, proxy.ts: 82ms, application-code: 66ms)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 18ms (next.js: 10ms, application-code: 8ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1271ms (next.js: 4ms, application-code: 1268ms)
+ GET /api/auth/error?error=Configuration 500 in 50ms (next.js: 35ms, application-code: 15ms)
+ GET /api/auth/error?error=Configuration 500 in 40ms (next.js: 30ms, application-code: 10ms)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 17ms (next.js: 6ms, application-code: 11ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1324ms (next.js: 2ms, application-code: 1322ms)
+✓ Compiled in 136ms
+ GET /api/auth/error?error=Configuration 500 in 271ms (next.js: 234ms, application-code: 37ms)
+✓ Compiled in 1187ms
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 177ms (next.js: 167ms, application-code: 10ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 3.4s (next.js: 2ms, application-code: 3.3s)
+ GET /api/auth/error?error=Configuration 500 in 168ms (next.js: 134ms, application-code: 34ms)
+ GET /api/auth/error?error=Configuration 500 in 45ms (next.js: 30ms, application-code: 15ms)
+ GET /icon 200 in 135ms
+ GET /login 200 in 422ms (next.js: 103ms, application-code: 318ms)
+ GET /icon 200 in 20ms
+ GET /api/auth/providers 200 in 46ms (next.js: 30ms, application-code: 16ms)
+ GET /api/auth/csrf 200 in 17ms (next.js: 4ms, application-code: 13ms)
+ POST /api/auth/callback/credentials 200 in 459ms (next.js: 3ms, application-code: 455ms)
+ GET /dashboard 200 in 217ms (next.js: 114ms, proxy.ts: 45ms, application-code: 58ms)
+ GET /icon 200 in 22ms
+ GET /api/auth/session 200 in 68ms (next.js: 33ms, application-code: 35ms)
+ GET /api/auth/session 200 in 23ms (next.js: 3ms, application-code: 21ms)
+ POST /dashboard 200 in 2.3s (next.js: 5ms, proxy.ts: 42ms, application-code: 2.3s)
+  └─ ƒ fetchProfileAndAccountAction() in 2154ms src/app/actions/auth.ts
+ POST /dashboard 200 in 749ms (next.js: 5ms, proxy.ts: 18ms, application-code: 726ms)
+  └─ ƒ fetchProfileAndAccountAction() in 716ms src/app/actions/auth.ts
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 9ms (next.js: 5ms, application-code: 5ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 937ms (next.js: 7ms, application-code: 930ms)
+ GET /inbox 200 in 112ms (next.js: 63ms, proxy.ts: 15ms, application-code: 34ms)
+ GET /icon 200 in 14ms
+ POST /inbox 200 in 420ms (next.js: 4ms, proxy.ts: 42ms, application-code: 375ms)
+  └─ ƒ getConversationsAction() in 356ms src/app/actions/conversations.ts
+ POST /inbox 200 in 384ms (next.js: 7ms, proxy.ts: 8ms, application-code: 368ms)
+  └─ ƒ getTagsAction() in 355ms src/app/actions/contacts.ts
+ POST /inbox 200 in 438ms (next.js: 5ms, proxy.ts: 16ms, application-code: 418ms)
+  └─ ƒ checkWhatsAppConnectionAction() in 405ms src/app/actions/conversations.ts
+ POST /inbox 200 in 384ms (next.js: 6ms, proxy.ts: 15ms, application-code: 363ms)
+  └─ ƒ getConversationsAction() in 353ms src/app/actions/conversations.ts
+ POST /inbox 200 in 414ms (next.js: 9ms, proxy.ts: 20ms, application-code: 385ms)
+  └─ ƒ getTagsAction() in 365ms src/app/actions/contacts.ts
+ POST /inbox 200 in 382ms (next.js: 5ms, proxy.ts: 14ms, application-code: 363ms)
+  └─ ƒ checkWhatsAppConnectionAction() in 353ms src/app/actions/conversations.ts
+ GET /settings 200 in 224ms (next.js: 143ms, proxy.ts: 7ms, application-code: 74ms)
+ GET /api/whatsapp/config 401 in 83ms (next.js: 58ms, proxy.ts: 6ms, application-code: 20ms)
+ GET /api/whatsapp/config 401 in 266ms (next.js: 73ms, proxy.ts: 32ms, application-code: 161ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/invitations/route.ts:144:8)
+  142 |
+  143 |     const { data, error } = await ctx.supabase
+> 144 |       .from("account_invitations")
+      |        ^
+  145 |       .select(
+  146 |         "id, role, label, created_by_user_id, created_at, expires_at, accepted_at, accept...
+  147 |       )
+ GET /api/account/invitations 500 in 393ms (next.js: 149ms, application-code: 244ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/members/route.ts:37:8)
+  35 |     // the caller's, so this query is naturally account-scoped.
+  36 |     const { data, error } = await ctx.supabase
+> 37 |       .from("profiles")
+     |        ^
+  38 |       .select("user_id, full_name, email, avatar_url, account_role, created_at")
+  39 |       .eq("account_id", ctx.accountId)
+  40 |       .order("created_at", { ascending: true });
+ GET /api/account/members 500 in 514ms (next.js: 230ms, application-code: 284ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/invitations/route.ts:144:8)
+  142 |
+  143 |     const { data, error } = await ctx.supabase
+> 144 |       .from("account_invitations")
+      |        ^
+  145 |       .select(
+  146 |         "id, role, label, created_by_user_id, created_at, expires_at, accepted_at, accept...
+  147 |       )
+ GET /api/account/invitations 500 in 587ms (next.js: 237ms, application-code: 350ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/members/route.ts:37:8)
+  35 |     // the caller's, so this query is naturally account-scoped.
+  36 |     const { data, error } = await ctx.supabase
+> 37 |       .from("profiles")
+     |        ^
+  38 |       .select("user_id, full_name, email, avatar_url, account_role, created_at")
+  39 |       .eq("account_id", ctx.accountId)
+  40 |       .order("created_at", { ascending: true });
+ GET /api/account/members 500 in 646ms (next.js: 236ms, application-code: 411ms)
+ GET /icon 200 in 409ms
+ GET /settings?tab=whatsapp 200 in 55ms (next.js: 9ms, proxy.ts: 6ms, application-code: 40ms)
+ GET /icon 200 in 9ms
+ GET /api/whatsapp/config 401 in 34ms (next.js: 9ms, proxy.ts: 11ms, application-code: 14ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /api/whatsapp/config 401 in 63ms (next.js: 16ms, proxy.ts: 22ms, application-code: 26ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 11ms (next.js: 5ms, application-code: 6ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1063ms (next.js: 4ms, application-code: 1059ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 61ms (next.js: 41ms, application-code: 20ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 771ms (next.js: 13ms, proxy.ts: 14ms, application-code: 744ms)
+  └─ ƒ fetchProfileAndAccountAction() in 710ms src/app/actions/auth.ts
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 25ms (next.js: 17ms, application-code: 8ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 985ms (next.js: 11ms, application-code: 974ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 62ms (next.js: 44ms, application-code: 18ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 752ms (next.js: 12ms, proxy.ts: 10ms, application-code: 730ms)
+  └─ ƒ fetchProfileAndAccountAction() in 717ms src/app/actions/auth.ts
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 67ms (next.js: 40ms, application-code: 27ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 771ms (next.js: 16ms, proxy.ts: 13ms, application-code: 741ms)
+  └─ ƒ fetchProfileAndAccountAction() in 723ms src/app/actions/auth.ts
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 6ms (next.js: 3ms, application-code: 3ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1154ms (next.js: 3ms, application-code: 1151ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 47ms (next.js: 29ms, application-code: 17ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 738ms (next.js: 5ms, proxy.ts: 9ms, application-code: 724ms)
+  └─ ƒ fetchProfileAndAccountAction() in 706ms src/app/actions/auth.ts
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 30ms (next.js: 16ms, application-code: 14ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1212ms (next.js: 7ms, application-code: 1205ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 54ms (next.js: 35ms, application-code: 19ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 765ms (next.js: 7ms, proxy.ts: 17ms, application-code: 741ms)
+  └─ ƒ fetchProfileAndAccountAction() in 711ms src/app/actions/auth.ts
+ GET /settings?tab=profile 200 in 54ms (next.js: 6ms, proxy.ts: 15ms, application-code: 33ms)
+ GET /icon 200 in 13ms
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /settings?tab=security 200 in 46ms (next.js: 5ms, proxy.ts: 7ms, application-code: 34ms)
+ GET /icon 200 in 12ms
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 19ms (next.js: 4ms, application-code: 14ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 674ms (next.js: 2ms, application-code: 672ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /settings?tab=overview 200 in 59ms (next.js: 10ms, proxy.ts: 15ms, application-code: 35ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/members/route.ts:37:8)
+  35 |     // the caller's, so this query is naturally account-scoped.
+  36 |     const { data, error } = await ctx.supabase
+> 37 |       .from("profiles")
+     |        ^
+  38 |       .select("user_id, full_name, email, avatar_url, account_role, created_at")
+  39 |       .eq("account_id", ctx.accountId)
+  40 |       .order("created_at", { ascending: true });
+ GET /api/account/members 500 in 181ms (next.js: 4ms, application-code: 177ms)
+ GET /icon 200 in 28ms
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/members/route.ts:37:8)
+  35 |     // the caller's, so this query is naturally account-scoped.
+  36 |     const { data, error } = await ctx.supabase
+> 37 |       .from("profiles")
+     |        ^
+  38 |       .select("user_id, full_name, email, avatar_url, account_role, created_at")
+  39 |       .eq("account_id", ctx.accountId)
+  40 |       .order("created_at", { ascending: true });
+ GET /api/account/members 500 in 152ms (next.js: 7ms, application-code: 145ms)
+ GET /api/whatsapp/config 401 in 324ms (next.js: 140ms, proxy.ts: 175ms, application-code: 9ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/invitations/route.ts:144:8)
+  142 |
+  143 |     const { data, error } = await ctx.supabase
+> 144 |       .from("account_invitations")
+      |        ^
+  145 |       .select(
+  146 |         "id, role, label, created_by_user_id, created_at, expires_at, accepted_at, accept...
+  147 |       )
+ GET /api/account/invitations 500 in 238ms (next.js: 16ms, application-code: 222ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/invitations/route.ts:144:8)
+  142 |
+  143 |     const { data, error } = await ctx.supabase
+> 144 |       .from("account_invitations")
+      |        ^
+  145 |       .select(
+  146 |         "id, role, label, created_by_user_id, created_at, expires_at, accepted_at, accept...
+  147 |       )
+ GET /api/account/invitations 500 in 331ms (next.js: 29ms, application-code: 302ms)
+ GET /api/whatsapp/config 401 in 348ms (next.js: 208ms, proxy.ts: 131ms, application-code: 9ms)
+ GET /settings?tab=whatsapp 200 in 53ms (next.js: 11ms, proxy.ts: 10ms, application-code: 31ms)
+ GET /icon 200 in 8ms
+ GET /api/whatsapp/config 401 in 35ms (next.js: 7ms, proxy.ts: 20ms, application-code: 8ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 49ms (next.js: 31ms, application-code: 18ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 754ms (next.js: 6ms, proxy.ts: 18ms, application-code: 730ms)
+  └─ ƒ fetchProfileAndAccountAction() in 713ms src/app/actions/auth.ts
+ GET /api/auth/session 200 in 43ms (next.js: 27ms, application-code: 16ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 741ms (next.js: 8ms, proxy.ts: 9ms, application-code: 725ms)
+  └─ ƒ fetchProfileAndAccountAction() in 706ms src/app/actions/auth.ts
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 10ms (next.js: 4ms, application-code: 6ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1118ms (next.js: 3ms, application-code: 1116ms)
+○ Compiling /automations ...
+ GET /automations 200 in 3.6s (next.js: 3.5s, proxy.ts: 12ms, application-code: 102ms)
+ GET /automations 200 in 72ms (next.js: 18ms, proxy.ts: 10ms, application-code: 44ms)
+ GET /icon 200 in 22ms
+ GET /automations 200 in 77ms (next.js: 5ms, proxy.ts: 27ms, application-code: 46ms)
+ GET /icon 200 in 17ms
+ GET /contacts 200 in 1622ms (next.js: 1578ms, proxy.ts: 12ms, application-code: 33ms)
+ GET /icon 200 in 9ms
+ POST /contacts 200 in 420ms (next.js: 7ms, proxy.ts: 39ms, application-code: 374ms)
+  └─ ƒ getTagsAction() in 357ms src/app/actions/contacts.ts
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /contacts 200 in 801ms (next.js: 8ms, proxy.ts: 42ms, application-code: 752ms)
+  └─ ƒ getContactsAction({"page":0,"pageSize":25,"search":"","...":"1 item not stringified"}) in 724ms src/app/actions/contacts.ts
+ POST /contacts 200 in 390ms (next.js: 5ms, proxy.ts: 17ms, application-code: 368ms)
+  └─ ƒ getTagsAction() in 355ms src/app/actions/contacts.ts
+ POST /contacts 200 in 732ms (next.js: 5ms, proxy.ts: 14ms, application-code: 713ms)
+  └─ ƒ getContactsAction({"page":0,"pageSize":25,"search":"","...":"1 item not stringified"}) in 701ms src/app/actions/contacts.ts
+ POST /contacts 200 in 725ms (next.js: 4ms, proxy.ts: 10ms, application-code: 711ms)
+  └─ ƒ getContactsAction({"page":0,"pageSize":25,"search":"","...":"1 item not stringified"}) in 703ms src/app/actions/contacts.ts
+ POST /contacts 200 in 723ms (next.js: 3ms, proxy.ts: 6ms, application-code: 713ms)
+  └─ ƒ getContactsAction({"page":0,"pageSize":25,"search":"","...":"1 item not stringified"}) in 707ms src/app/actions/contacts.ts
+ GET /inbox 200 in 51ms (next.js: 6ms, proxy.ts: 6ms, application-code: 38ms)
+ GET /icon 200 in 19ms
+ POST /inbox 200 in 381ms (next.js: 3ms, proxy.ts: 6ms, application-code: 372ms)
+  └─ ƒ getConversationsAction() in 354ms src/app/actions/conversations.ts
+ POST /inbox 200 in 426ms (next.js: 18ms, proxy.ts: 34ms, application-code: 374ms)
+  └─ ƒ getTagsAction() in 357ms src/app/actions/contacts.ts
+ POST /inbox 200 in 411ms (next.js: 27ms, proxy.ts: 8ms, application-code: 376ms)
+  └─ ƒ checkWhatsAppConnectionAction() in 360ms src/app/actions/conversations.ts
+ POST /inbox 200 in 393ms (next.js: 4ms, proxy.ts: 8ms, application-code: 382ms)
+  └─ ƒ getConversationsAction() in 364ms src/app/actions/conversations.ts
+ POST /inbox 200 in 388ms (next.js: 9ms, proxy.ts: 12ms, application-code: 367ms)
+  └─ ƒ getTagsAction() in 357ms src/app/actions/contacts.ts
+ POST /inbox 200 in 395ms (next.js: 5ms, proxy.ts: 13ms, application-code: 377ms)
+  └─ ƒ checkWhatsAppConnectionAction() in 356ms src/app/actions/conversations.ts
+ GET /settings 200 in 131ms (next.js: 20ms, proxy.ts: 33ms, application-code: 78ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/members/route.ts:37:8)
+  35 |     // the caller's, so this query is naturally account-scoped.
+  36 |     const { data, error } = await ctx.supabase
+> 37 |       .from("profiles")
+     |        ^
+  38 |       .select("user_id, full_name, email, avatar_url, account_role, created_at")
+  39 |       .eq("account_id", ctx.accountId)
+  40 |       .order("created_at", { ascending: true });
+ GET /api/account/members 500 in 151ms (next.js: 14ms, application-code: 137ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/invitations/route.ts:144:8)
+  142 |
+  143 |     const { data, error } = await ctx.supabase
+> 144 |       .from("account_invitations")
+      |        ^
+  145 |       .select(
+  146 |         "id, role, label, created_by_user_id, created_at, expires_at, accepted_at, accept...
+  147 |       )
+ GET /api/account/invitations 500 in 235ms (next.js: 13ms, application-code: 222ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/members/route.ts:37:8)
+  35 |     // the caller's, so this query is naturally account-scoped.
+  36 |     const { data, error } = await ctx.supabase
+> 37 |       .from("profiles")
+     |        ^
+  38 |       .select("user_id, full_name, email, avatar_url, account_role, created_at")
+  39 |       .eq("account_id", ctx.accountId)
+  40 |       .order("created_at", { ascending: true });
+ GET /api/account/members 500 in 313ms (next.js: 126ms, application-code: 187ms)
+ GET /api/whatsapp/config 401 in 346ms (next.js: 310ms, proxy.ts: 27ms, application-code: 9ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/invitations/route.ts:144:8)
+  142 |
+  143 |     const { data, error } = await ctx.supabase
+> 144 |       .from("account_invitations")
+      |        ^
+  145 |       .select(
+  146 |         "id, role, label, created_by_user_id, created_at, expires_at, accepted_at, accept...
+  147 |       )
+ GET /api/account/invitations 500 in 410ms (next.js: 136ms, application-code: 274ms)
+ GET /icon 200 in 205ms
+ GET /api/whatsapp/config 401 in 452ms (next.js: 216ms, proxy.ts: 218ms, application-code: 19ms)
+ GET /settings?tab=whatsapp 200 in 46ms (next.js: 8ms, proxy.ts: 11ms, application-code: 27ms)
+ GET /icon 200 in 12ms
+ GET /api/whatsapp/config 401 in 17ms (next.js: 3ms, proxy.ts: 5ms, application-code: 10ms)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 11ms (next.js: 5ms, application-code: 6ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1563ms (next.js: 2ms, application-code: 1561ms)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 15ms (next.js: 5ms, application-code: 10ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1229ms (next.js: 5ms, application-code: 1224ms)
+ GET /settings?tab=whatsapp 200 in 484ms (next.js: 152ms, proxy.ts: 88ms, application-code: 244ms)
+ GET /settings?tab=whatsapp 200 in 212ms (next.js: 5ms, proxy.ts: 68ms, application-code: 140ms)
+ GET /settings?tab=whatsapp 200 in 114ms (next.js: 8ms, proxy.ts: 7ms, application-code: 100ms)
+ GET /settings?tab=whatsapp 200 in 61ms (next.js: 5ms, proxy.ts: 7ms, application-code: 49ms)
+ GET /settings?tab=whatsapp 200 in 247ms (next.js: 126ms, proxy.ts: 16ms, application-code: 105ms)
+ GET /settings?tab=whatsapp 200 in 53ms (next.js: 5ms, proxy.ts: 8ms, application-code: 40ms)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 137ms (next.js: 130ms, application-code: 7ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 2.7s (next.js: 3ms, application-code: 2.7s)
+✓ Compiled in 567ms
+ GET /settings?tab=whatsapp 200 in 267ms (next.js: 133ms, proxy.ts: 28ms, application-code: 106ms)
+ GET /settings?tab=whatsapp 200 in 66ms (next.js: 5ms, proxy.ts: 4ms, application-code: 57ms)
+ GET /settings?tab=whatsapp 200 in 151ms (next.js: 17ms, proxy.ts: 8ms, application-code: 126ms)
+ GET /settings?tab=whatsapp 200 in 124ms (next.js: 4ms, proxy.ts: 9ms, application-code: 111ms)
+ GET /settings?tab=whatsapp 200 in 102ms (next.js: 6ms, proxy.ts: 5ms, application-code: 91ms)
+ GET /settings?tab=whatsapp 200 in 122ms (next.js: 5ms, proxy.ts: 9ms, application-code: 108ms)
+ GET /settings?tab=whatsapp 200 in 78ms (next.js: 6ms, proxy.ts: 5ms, application-code: 66ms)
+ GET /settings?tab=whatsapp 200 in 46ms (next.js: 5ms, proxy.ts: 6ms, application-code: 35ms)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 148ms (next.js: 139ms, application-code: 9ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 2.6s (next.js: 10ms, application-code: 2.5s)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 169ms (next.js: 129ms, application-code: 41ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /settings?tab=api 200 in 84ms (next.js: 11ms, proxy.ts: 18ms, application-code: 55ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/api-keys/route.ts:52:8)
+  50 |
+  51 |     const { data, error } = await ctx.supabase
+> 52 |       .from('api_keys')
+     |        ^
+  53 |       .select(SAFE_COLUMNS)
+  54 |       .eq('account_id', ctx.accountId)
+  55 |       .order('created_at', { ascending: false });
+ GET /api/account/api-keys 500 in 219ms (next.js: 75ms, application-code: 144ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/api-keys/route.ts:52:8)
+  50 |
+  51 |     const { data, error } = await ctx.supabase
+> 52 |       .from('api_keys')
+     |        ^
+  53 |       .select(SAFE_COLUMNS)
+  54 |       .eq('account_id', ctx.accountId)
+  55 |       .order('created_at', { ascending: false });
+ GET /api/account/api-keys 500 in 91ms (next.js: 4ms, application-code: 87ms)
+ POST /settings?tab=whatsapp 200 in 2.6s (next.js: 9ms, proxy.ts: 25ms, application-code: 2.6s)
+  └─ ƒ fetchProfileAndAccountAction() in 2303ms src/app/actions/auth.ts
+ GET /icon 200 in 294ms
+ GET /settings?tab=api 200 in 491ms (next.js: 9ms, proxy.ts: 5ms, application-code: 477ms)
+ GET /icon 200 in 18ms
+ GET /api/auth/session 200 in 59ms (next.js: 45ms, application-code: 14ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/api-keys/route.ts:52:8)
+  50 |
+  51 |     const { data, error } = await ctx.supabase
+> 52 |       .from('api_keys')
+     |        ^
+  53 |       .select(SAFE_COLUMNS)
+  54 |       .eq('account_id', ctx.accountId)
+  55 |       .order('created_at', { ascending: false });
+ GET /api/account/api-keys 500 in 115ms (next.js: 3ms, application-code: 112ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/api-keys/route.ts:52:8)
+  50 |
+  51 |     const { data, error } = await ctx.supabase
+> 52 |       .from('api_keys')
+     |        ^
+  53 |       .select(SAFE_COLUMNS)
+  54 |       .eq('account_id', ctx.accountId)
+  55 |       .order('created_at', { ascending: false });
+ GET /api/account/api-keys 500 in 186ms (next.js: 100ms, application-code: 86ms)
+ POST /settings?tab=api 200 in 933ms (next.js: 6ms, proxy.ts: 110ms, application-code: 817ms)
+  └─ ƒ fetchProfileAndAccountAction() in 799ms src/app/actions/auth.ts
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 16ms (next.js: 9ms, application-code: 7ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 777ms (next.js: 5ms, application-code: 772ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 60ms (next.js: 38ms, application-code: 22ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=api 200 in 773ms (next.js: 4ms, proxy.ts: 13ms, application-code: 756ms)
+  └─ ƒ fetchProfileAndAccountAction() in 724ms src/app/actions/auth.ts
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at POST (src/app/api/account/api-keys/route.ts:127:8)
+  125 |
+  126 |     const { data, error } = await ctx.supabase
+> 127 |       .from('api_keys')
+      |        ^
+  128 |       .insert({
+  129 |         account_id: ctx.accountId,
+  130 |         created_by: ctx.userId,
+ POST /api/account/api-keys 500 in 145ms (next.js: 3ms, application-code: 142ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /dashboard 200 in 91ms (next.js: 33ms, proxy.ts: 9ms, application-code: 49ms)
+ GET /icon 200 in 16ms
+ GET /inbox 200 in 125ms (next.js: 30ms, proxy.ts: 13ms, application-code: 82ms)
+ GET /icon 200 in 12ms
+ POST /inbox 200 in 432ms (next.js: 15ms, proxy.ts: 22ms, application-code: 395ms)
+  └─ ƒ getConversationsAction() in 367ms src/app/actions/conversations.ts
+ POST /inbox 200 in 433ms (next.js: 6ms, proxy.ts: 35ms, application-code: 392ms)
+  └─ ƒ getTagsAction() in 367ms src/app/actions/contacts.ts
+ POST /inbox 200 in 407ms (next.js: 10ms, proxy.ts: 8ms, application-code: 389ms)
+  └─ ƒ checkWhatsAppConnectionAction() in 373ms src/app/actions/conversations.ts
+ POST /inbox 200 in 435ms (next.js: 5ms, proxy.ts: 26ms, application-code: 404ms)
+  └─ ƒ getConversationsAction() in 377ms src/app/actions/conversations.ts
+ POST /inbox 200 in 405ms (next.js: 6ms, proxy.ts: 17ms, application-code: 382ms)
+  └─ ƒ getTagsAction() in 366ms src/app/actions/contacts.ts
+ POST /inbox 200 in 392ms (next.js: 8ms, proxy.ts: 8ms, application-code: 376ms)
+  └─ ƒ checkWhatsAppConnectionAction() in 363ms src/app/actions/conversations.ts
+ GET /settings 200 in 61ms (next.js: 8ms, proxy.ts: 8ms, application-code: 46ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/invitations/route.ts:144:8)
+  142 |
+  143 |     const { data, error } = await ctx.supabase
+> 144 |       .from("account_invitations")
+      |        ^
+  145 |       .select(
+  146 |         "id, role, label, created_by_user_id, created_at, expires_at, accepted_at, accept...
+  147 |       )
+ GET /api/account/invitations 500 in 348ms (next.js: 123ms, application-code: 226ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/members/route.ts:37:8)
+  35 |     // the caller's, so this query is naturally account-scoped.
+  36 |     const { data, error } = await ctx.supabase
+> 37 |       .from("profiles")
+     |        ^
+  38 |       .select("user_id, full_name, email, avatar_url, account_role, created_at")
+  39 |       .eq("account_id", ctx.accountId)
+  40 |       .order("created_at", { ascending: true });
+ GET /api/account/members 500 in 526ms (next.js: 166ms, application-code: 360ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/members/route.ts:37:8)
+  35 |     // the caller's, so this query is naturally account-scoped.
+  36 |     const { data, error } = await ctx.supabase
+> 37 |       .from("profiles")
+     |        ^
+  38 |       .select("user_id, full_name, email, avatar_url, account_role, created_at")
+  39 |       .eq("account_id", ctx.accountId)
+  40 |       .order("created_at", { ascending: true });
+ GET /api/account/members 500 in 456ms (next.js: 19ms, application-code: 437ms)
+[toErrorResponse] uncategorized error: TypeError: Cannot read properties of undefined (reading 'from')
+    at GET (src/app/api/account/invitations/route.ts:144:8)
+  142 |
+  143 |     const { data, error } = await ctx.supabase
+> 144 |       .from("account_invitations")
+      |        ^
+  145 |       .select(
+  146 |         "id, role, label, created_by_user_id, created_at, expires_at, accepted_at, accept...
+  147 |       )
+ GET /api/account/invitations 500 in 540ms (next.js: 25ms, application-code: 516ms)
+ GET /icon 200 in 109ms
+ GET /api/whatsapp/config 200 in 1375ms (next.js: 74ms, proxy.ts: 4ms, application-code: 1297ms)
+ GET /api/whatsapp/config 200 in 1387ms (next.js: 518ms, proxy.ts: 193ms, application-code: 676ms)
+ GET /settings?tab=whatsapp 200 in 53ms (next.js: 5ms, proxy.ts: 13ms, application-code: 35ms)
+ GET /icon 200 in 10ms
+ GET /api/whatsapp/config 200 in 166ms (next.js: 5ms, proxy.ts: 13ms, application-code: 148ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 12ms (next.js: 3ms, application-code: 9ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1105ms (next.js: 5ms, application-code: 1100ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+Error inserting whatsapp_config: {
+  code: '42501',
+  details: null,
+  hint: null,
+  message: 'new row violates row-level security policy for table "whatsapp_config"'
+}
+ POST /api/whatsapp/config 500 in 1947ms (next.js: 7ms, proxy.ts: 11ms, application-code: 1929ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 74ms (next.js: 55ms, application-code: 19ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 785ms (next.js: 4ms, proxy.ts: 10ms, application-code: 771ms)
+  └─ ƒ fetchProfileAndAccountAction() in 760ms src/app/actions/auth.ts
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 14ms (next.js: 8ms, application-code: 6ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 683ms (next.js: 3ms, application-code: 680ms)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 15ms (next.js: 10ms, application-code: 6ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1080ms (next.js: 6ms, application-code: 1074ms)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 16ms (next.js: 7ms, application-code: 8ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1265ms (next.js: 3ms, application-code: 1262ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 60ms (next.js: 40ms, application-code: 20ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 788ms (next.js: 7ms, proxy.ts: 12ms, application-code: 769ms)
+  └─ ƒ fetchProfileAndAccountAction() in 750ms src/app/actions/auth.ts
+ GET /api/auth/session 200 in 51ms (next.js: 32ms, application-code: 19ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 758ms (next.js: 5ms, proxy.ts: 9ms, application-code: 744ms)
+  └─ ƒ fetchProfileAndAccountAction() in 729ms src/app/actions/auth.ts
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 17ms (next.js: 9ms, application-code: 7ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 704ms (next.js: 3ms, application-code: 701ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 59ms (next.js: 36ms, application-code: 23ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 785ms (next.js: 8ms, proxy.ts: 17ms, application-code: 760ms)
+  └─ ƒ fetchProfileAndAccountAction() in 729ms src/app/actions/auth.ts
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 69ms (next.js: 50ms, application-code: 19ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 778ms (next.js: 16ms, proxy.ts: 14ms, application-code: 748ms)
+  └─ ƒ fetchProfileAndAccountAction() in 730ms src/app/actions/auth.ts
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 15ms (next.js: 5ms, application-code: 10ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 727ms (next.js: 3ms, application-code: 723ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 59ms (next.js: 38ms, application-code: 20ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 756ms (next.js: 5ms, proxy.ts: 13ms, application-code: 738ms)
+  └─ ƒ fetchProfileAndAccountAction() in 723ms src/app/actions/auth.ts
+ GET /api/auth/session 200 in 63ms (next.js: 41ms, application-code: 23ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /settings?tab=whatsapp 200 in 746ms (next.js: 5ms, proxy.ts: 13ms, application-code: 729ms)
+  └─ ƒ fetchProfileAndAccountAction() in 718ms src/app/actions/auth.ts
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 23ms (next.js: 8ms, application-code: 15ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1124ms (next.js: 7ms, application-code: 1117ms)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 17ms (next.js: 8ms, application-code: 9ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1268ms (next.js: 6ms, application-code: 1262ms)

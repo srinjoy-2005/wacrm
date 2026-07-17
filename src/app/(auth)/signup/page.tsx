@@ -3,7 +3,8 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { signIn } from "next-auth/react";
+import { signUpAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,7 +21,7 @@ import { MessageSquare, CheckCircle, UsersRound } from "lucide-react";
 // unless wrapped in Suspense — same pattern as /login.
 export default function SignupPage() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-background text-foreground">Loading...</div>}>
       <SignupPageInner />
     </Suspense>
   );
@@ -42,7 +43,6 @@ function SignupPageInner() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const supabase = createClient();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,29 +60,32 @@ function SignupPageInner() {
 
     setLoading(true);
 
-    // If we have an invite token, point Supabase's verification
-    // email back at the join page so the user can accept after
-    // verifying. Without a token, Supabase uses its default
-    // redirect (the app root).
-    const emailRedirectTo = inviteToken
-      ? `${window.location.origin}/join/${encodeURIComponent(inviteToken)}`
-      : undefined;
+    const res = await signUpAction({ email, password, fullName });
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-        },
-        ...(emailRedirectTo ? { emailRedirectTo } : {}),
-      },
-    });
-
-    if (error) {
-      setError(error.message);
+    if (res.error) {
+      setError(res.error);
       setLoading(false);
       return;
+    }
+
+    // Attempt to log them in directly
+    const loginRes = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+
+    if (loginRes?.error) {
+      setError("Account created, but couldn't log in automatically.");
+      setLoading(false);
+      return;
+    }
+
+    // Automatically redirect based on invite token or default to dashboard
+    if (inviteToken) {
+      window.location.href = `/join/${encodeURIComponent(inviteToken)}`;
+    } else {
+      window.location.href = "/dashboard";
     }
 
     setSuccess(true);

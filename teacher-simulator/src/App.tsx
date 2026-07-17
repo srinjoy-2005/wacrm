@@ -58,6 +58,9 @@ export default function App() {
   const [inputText, setInputText] = useState('')
   const [newContactName, setNewContactName] = useState('')
   const [newContactPhone, setNewContactPhone] = useState('')
+  const [newContactEmail, setNewContactEmail] = useState('')
+  const [newContactCompany, setNewContactCompany] = useState('')
+  const [newContactPreferredLanguage, setNewContactPreferredLanguage] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
 
   // Simulator Log State
@@ -215,6 +218,9 @@ export default function App() {
         body: JSON.stringify({
           name: newContactName,
           phone: cleanPhone,
+          email: newContactEmail || undefined,
+          company: newContactCompany || undefined,
+          preferred_language: newContactPreferredLanguage || undefined,
         })
       })
 
@@ -226,6 +232,9 @@ export default function App() {
       setSelectedContact(data)
       setNewContactName('')
       setNewContactPhone('')
+      setNewContactEmail('')
+      setNewContactCompany('')
+      setNewContactPreferredLanguage('')
       setIsCreatingContact(false)
     } catch (err: unknown) {
       alert('Error creating contact: ' + (err as Error).message)
@@ -477,6 +486,27 @@ export default function App() {
                   onChange={(e) => setNewContactPhone(e.target.value)}
                   className="w-full px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-md text-xs text-zinc-100 outline-none focus:border-emerald-500"
                   required
+                />
+                <input
+                  type="email"
+                  placeholder="Email (optional)"
+                  value={newContactEmail}
+                  onChange={(e) => setNewContactEmail(e.target.value)}
+                  className="w-full px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-md text-xs text-zinc-100 outline-none focus:border-emerald-500"
+                />
+                <input
+                  type="text"
+                  placeholder="Company (optional)"
+                  value={newContactCompany}
+                  onChange={(e) => setNewContactCompany(e.target.value)}
+                  className="w-full px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-md text-xs text-zinc-100 outline-none focus:border-emerald-500"
+                />
+                <input
+                  type="text"
+                  placeholder="Preferred Language (e.g. en, es)"
+                  value={newContactPreferredLanguage}
+                  onChange={(e) => setNewContactPreferredLanguage(e.target.value)}
+                  className="w-full px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-md text-xs text-zinc-100 outline-none focus:border-emerald-500"
                 />
                 <button
                   type="submit"

@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,7 +23,7 @@ import { MessageSquare, UsersRound } from "lucide-react";
 // string on the client.
 export default function LoginPage() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-background text-foreground">Loading...</div>}>
       <LoginPageInner />
     </Suspense>
   );
@@ -41,20 +41,19 @@ function LoginPageInner() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const res = await signIn("credentials", {
       email,
       password,
+      redirect: false,
     });
 
-    if (error) {
-      setError(error.message);
+    if (res?.error) {
+      setError("Invalid email or password");
       setLoading(false);
       return;
     }

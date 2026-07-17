@@ -11,7 +11,9 @@ export interface ApiContact {
   name: string | null;
   email: string | null;
   company: string | null;
+  segment: string | null;
   avatar_url: string | null;
+  preferred_language: string | null;
   tags: { id: string; name: string; color: string }[];
   created_at: string;
   updated_at: string;
@@ -48,6 +50,8 @@ export interface ContactInput {
   name?: string | null;
   email?: string | null;
   company?: string | null;
+  segment?: string | null;
+  preferred_language?: string | null;
 }
 
 export async function findOrCreateContactDrizzle(
@@ -77,6 +81,8 @@ export async function findOrCreateContactDrizzle(
         name: input.name ?? sanitized,
         email: input.email ?? null,
         company: input.company ?? null,
+        segment: input.segment ?? null,
+        preferred_language: input.preferred_language ?? 'en',
       })
       .returning({ id: contacts.id });
     createdId = result[0]?.id;
@@ -172,7 +178,9 @@ export async function getContactByIdDrizzle(
     name: contactRecord.name,
     email: contactRecord.email,
     company: contactRecord.company,
+    segment: contactRecord.segment,
     avatar_url: contactRecord.avatar_url,
+    preferred_language: contactRecord.preferred_language,
     tags: tags,
     created_at: contactRecord.created_at.toISOString(),
     updated_at: contactRecord.updated_at.toISOString(),

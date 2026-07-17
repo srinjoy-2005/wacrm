@@ -1,26 +1,19 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/options";
 import { db } from '@/db';
 import { contacts, messages, conversations } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
 
 
 export async function getSimulatorDataAction() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
     throw new Error('Unauthorized');
   }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('account_id')
-    .eq('user_id', user.id)
-    .single();
-
-  const accountId = profile?.account_id;
+  const accountId = (session.user as any).accountId;
   if (!accountId) throw new Error('Account not found');
 
   // Load Contacts

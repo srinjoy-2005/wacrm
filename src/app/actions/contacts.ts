@@ -136,6 +136,8 @@ export async function upsertContactAction(data: {
   phone: string;
   email?: string;
   company?: string;
+  segment?: string;
+  preferred_language?: string;
   tagIds?: string[];
 }) {
   const ctx = await requireRole('agent');
@@ -151,6 +153,8 @@ export async function upsertContactAction(data: {
           phone: data.phone,
           email: data.email || null,
           company: data.company || null,
+          segment: data.segment || null,
+          preferred_language: data.preferred_language || null,
           updated_at: new Date(),
         })
         .where(and(eq(contacts.account_id, ctx.accountId), eq(contacts.id, contactId)));
@@ -164,6 +168,8 @@ export async function upsertContactAction(data: {
           phone: data.phone,
           email: data.email || null,
           company: data.company || null,
+          segment: data.segment || null,
+          preferred_language: data.preferred_language || null,
         })
         .returning({ id: contacts.id });
       contactId = inserted[0].id;

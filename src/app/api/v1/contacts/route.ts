@@ -138,6 +138,8 @@ export async function POST(request: Request) {
         name: typeof body.name === 'string' ? body.name : undefined,
         email: typeof body.email === 'string' ? body.email : undefined,
         company: typeof body.company === 'string' ? body.company : undefined,
+        segment: typeof body.segment === 'string' ? body.segment : undefined,
+        preferred_language: typeof body.preferred_language === 'string' ? body.preferred_language : undefined,
       }
     );
 

@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/options";
 import { createClient } from '@/lib/supabase/server'
 import { decrypt } from '@/lib/whatsapp/encryption'
 import { normalizeStatus } from '@/lib/whatsapp/template-status-normalize'
@@ -126,23 +128,13 @@ export async function POST() {
   try {
     const supabase = await createClient()
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+    const user = session.user as any;
 
-    // Resolve the caller's account_id — both whatsapp_config and
-    // the message_templates we sync into are account-scoped.
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('account_id')
-      .eq('user_id', user.id)
-      .maybeSingle()
-    const accountId = profile?.account_id as string | undefined
+    const accountId = user.accountId;
     if (!accountId) {
       return NextResponse.json(
         { error: 'Your profile is not linked to an account.' },

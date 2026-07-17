@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { upsertContactAction } from "@/app/actions/contacts";
 import type { Contact, Deal, ContactNote, Tag } from "@/types";
 import {
   Phone,
@@ -15,9 +16,21 @@ import {
   DollarSign,
   StickyNote,
   Plus,
+  Edit2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 import { format } from "date-fns";
 
 interface ContactSidebarProps {
@@ -32,6 +45,48 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
   const [tags, setTags] = useState<(Tag & { contact_collection_id: string })[]>([]);
   const [newNote, setNewNote] = useState("");
   const [addingNote, setAddingNote] = useState(false);
+
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editCompany, setEditCompany] = useState("");
+  const [editSegment, setEditSegment] = useState("");
+  const [editLanguage, setEditLanguage] = useState("");
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
+
+  useEffect(() => {
+    if (contact && isEditDialogOpen) {
+      setEditName(contact.name || "");
+      setEditEmail(contact.email || "");
+      setEditCompany(contact.company || "");
+      setEditSegment(contact.segment || "");
+      setEditLanguage(contact.preferred_language || "");
+    }
+  }, [contact, isEditDialogOpen]);
+
+  const handleSaveContact = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contact) return;
+    setIsSavingEdit(true);
+    try {
+      await upsertContactAction({
+        id: contact.id,
+        phone: contact.phone,
+        name: editName || undefined,
+        email: editEmail || undefined,
+        company: editCompany || undefined,
+        segment: editSegment || undefined,
+        preferred_language: editLanguage || undefined,
+      });
+      toast.success("Contact updated");
+      setIsEditDialogOpen(false);
+      fetchContactData();
+    } catch (err: any) {
+      toast.error(`Failed to update contact: ${err.message}`);
+    } finally {
+      setIsSavingEdit(false);
+    }
+  };
 
   const fetchContactData = useCallback(async () => {
     if (!contact) return;
@@ -143,6 +198,46 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
                 initials
               )}
             </div>
+
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+              <DialogTrigger className="absolute right-4 top-4 inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">
+                <Edit2 className="h-4 w-4" />
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <form onSubmit={handleSaveContact}>
+                  <DialogHeader>
+                    <DialogTitle>Edit Contact</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="name">Name</Label>
+                      <Input id="name" value={editName} onChange={(e) => setEditName(e.target.value)} />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input id="email" type="email" value={editEmail} onChange={(e) => setEditEmail(e.target.value)} />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="company">Company</Label>
+                      <Input id="company" value={editCompany} onChange={(e) => setEditCompany(e.target.value)} />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="segment">Segment</Label>
+                      <Input id="segment" value={editSegment} onChange={(e) => setEditSegment(e.target.value)} />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="language">Preferred Language</Label>
+                      <Input id="language" value={editLanguage} onChange={(e) => setEditLanguage(e.target.value)} />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit" disabled={isSavingEdit}>
+                      {isSavingEdit ? "Saving..." : "Save changes"}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
             <h3 className="mt-3 text-sm font-semibold text-foreground">
               {displayName}
             </h3>

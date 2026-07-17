@@ -7,29 +7,10 @@ import {
   verifyPhoneNumber,
 } from '@/lib/whatsapp/meta-api'
 import { encrypt, decrypt } from '@/lib/whatsapp/encryption'
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/options";
 
-/**
- * Resolve the caller's account_id from their profile. Inlined here
- * (rather than going through `@/lib/auth/account.getCurrentAccount`)
- * because the GET handler wants to return shaped 200s for every
- * non-auth failure mode, not throw — keeping the helper minimal lets
- * the existing response branches stay as-is.
- *
- * Returns null if the user has no profile or no account; callers
- * should treat that the same as "not connected".
- */
-async function resolveAccountId(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  userId: string,
-): Promise<string | null> {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('account_id')
-    .eq('user_id', userId)
-    .maybeSingle()
-  if (error || !data?.account_id) return null
-  return data.account_id as string
-}
+// resolveAccountId removed as NextAuth provides accountId directly on the session.
 
 // Lazy-initialised service-role client. We need it to detect a
 // phone_number_id already claimed by a *different* user — under RLS,
@@ -64,16 +45,12 @@ export async function GET() {
   try {
     const supabase = await createClient()
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const accountId = await resolveAccountId(supabase, user.id)
+    const accountId = (session.user as any).accountId;
     if (!accountId) {
       return NextResponse.json(
         {
@@ -182,16 +159,13 @@ export async function POST(request: Request) {
   try {
     const supabase = await createClient()
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+    const user = session.user as any;
 
-    const accountId = await resolveAccountId(supabase, user.id)
+    const accountId = user.accountId;
     if (!accountId) {
       return NextResponse.json(
         { error: 'Your profile is not linked to an account.' },
@@ -457,16 +431,12 @@ export async function DELETE() {
   try {
     const supabase = await createClient()
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const accountId = await resolveAccountId(supabase, user.id)
+    const accountId = (session.user as any).accountId;
     if (!accountId) {
       return NextResponse.json(
         { error: 'Your profile is not linked to an account.' },

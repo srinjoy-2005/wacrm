@@ -15,6 +15,7 @@ export const profiles = pgTable('profiles', {
   full_name: text('full_name').notNull(),
   email: text('email').notNull(),
   avatar_url: text('avatar_url'),
+  hashed_password: text('hashed_password'),
   role: text('role').default('user'),
   account_id: uuid('account_id').references(() => accounts.id),
   account_role: text('account_role'),
