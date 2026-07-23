@@ -112,20 +112,29 @@ export async function POST(request: Request) {
       return fail('bad_request', "'contact_id' is required", 400);
     }
 
-    // Try to find open conversation
+    // Try to find ANY conversation (since there is a UNIQUE constraint on account_id + contact_id)
     const existing = await db
       .select()
       .from(conversations)
       .where(
         and(
           eq(conversations.contact_id, contactId),
-          eq(conversations.status, 'open')
+          eq(conversations.account_id, ctx.accountId)
         )
       )
       .limit(1)
       .then((res) => res[0]);
 
     if (existing) {
+      // Reopen it if it's closed
+      if (existing.status !== 'open') {
+        await db
+          .update(conversations)
+          .set({ status: 'open', updated_at: new Date() })
+          .where(eq(conversations.id, existing.id));
+        existing.status = 'open';
+      }
+
       const c = await db.select().from(contacts).where(eq(contacts.id, contactId)).limit(1).then(r => r[0]);
       let contactObj: Contact | undefined;
       if (c) {
