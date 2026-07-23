@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/options";
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/automations/admin-client'
 import {
@@ -12,11 +14,8 @@ import {
 } from '@/lib/automations/validate'
 
 async function requireUser() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  return user
+  const session = await getServerSession(authOptions)
+  return session?.user as any
 }
 
 export async function GET(
