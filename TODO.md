@@ -34,3 +34,11 @@ TODO: consider consequences and DB migration structures before pushing nigration
 
 Updated next.config.ts to include Access-Control-Allow-Origin: \* and related headers for all /api/\* routes.)  
  **should consder replacing that to some domains**
+
+
+PENDING
+- The Database Migration (Currently In Progress)
+- currently the automations have several options(like changing contacts, sending webhooks) which havent been functional from backend gotta complete
+- API security (later)
+
+
