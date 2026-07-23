@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/options";
-import { createClient } from '@/lib/supabase/server'
-import { supabaseAdmin } from '@/lib/automations/admin-client'
+import { db } from '@/db'
+import { automations } from '@/db/schema'
+import { eq, desc } from 'drizzle-orm'
 import { getTemplate } from '@/lib/automations/templates'
 import { insertSteps, type BuilderStepInput } from '@/lib/automations/steps-tree'
 import {
@@ -11,21 +12,25 @@ import {
 } from '@/lib/automations/validate'
 
 export async function GET() {
-  const supabase = await createClient()
   const session = await getServerSession(authOptions)
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const user = session.user as any
+  const accountId = user.accountId;
+  if (!accountId) return NextResponse.json({ error: 'No account' }, { status: 403 })
 
-  const { data, error } = await supabase
-    .from('automations')
-    .select('*')
-    .order('created_at', { ascending: false })
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ automations: data ?? [] })
+  try {
+    const data = await db
+      .select()
+      .from(automations)
+      .where(eq(automations.account_id, accountId))
+      .orderBy(desc(automations.created_at))
+    return NextResponse.json({ automations: data ?? [] })
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
 }
 
 export async function POST(request: Request) {
-  const supabase = await createClient()
   const session = await getServerSession(authOptions)
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const user = session.user as any
@@ -86,24 +91,31 @@ export async function POST(request: Request) {
     }
   }
 
-  const admin = supabaseAdmin()
-  const { data: automation, error: insertErr } = await admin
-    .from('automations')
-    .insert({
-      user_id: user.id,
-      account_id: accountId,
-      name: effectiveName,
-      description: effectiveDescription ?? null,
-      trigger_type: effectiveTriggerType,
-      trigger_config: effectiveTriggerConfig ?? {},
-      is_active: !!is_active,
-    })
-    .select()
-    .single()
-
-  if (insertErr || !automation) {
+  let automation;
+  try {
+    const res = await db
+      .insert(automations)
+      .values({
+        user_id: user.id,
+        account_id: accountId,
+        name: effectiveName,
+        description: effectiveDescription ?? null,
+        trigger_type: effectiveTriggerType,
+        trigger_config: effectiveTriggerConfig ?? {},
+        is_active: !!is_active,
+      } as any)
+      .returning();
+    automation = res[0];
+  } catch (insertErr: any) {
     return NextResponse.json(
       { error: insertErr?.message ?? 'insert failed' },
+      { status: 500 },
+    )
+  }
+
+  if (!automation) {
+    return NextResponse.json(
+      { error: 'insert failed' },
       { status: 500 },
     )
   }

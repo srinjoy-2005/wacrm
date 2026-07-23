@@ -1,0 +1,57 @@
+◇ injected env (10) from .env.local // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+Applying Phase 2 schema...
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "automation_logs" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '208',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "automation_pending_executions" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '208',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "automation_steps" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '208',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "automations" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '208',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "message_templates" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '208',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "whatsapp_config" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '208',
+  routine: 'transformCreateStmt'
+}
+Successfully applied Phase 2 tables and constraints!

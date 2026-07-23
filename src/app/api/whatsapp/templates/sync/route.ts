@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/options";
-import { createClient } from '@/lib/supabase/server'
+import { db } from '@/db'
+import { whatsapp_config, message_templates } from '@/db/schema'
+import { eq, and } from 'drizzle-orm'
 import { decrypt } from '@/lib/whatsapp/encryption'
 import { normalizeStatus } from '@/lib/whatsapp/template-status-normalize'
 import type { TemplateButton, TemplateSampleValues } from '@/types'
@@ -126,8 +128,6 @@ function extractSampleValues(
 
 export async function POST() {
   try {
-    const supabase = await createClient()
-
     const session = await getServerSession(authOptions)
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -142,13 +142,19 @@ export async function POST() {
       )
     }
 
-    const { data: config, error: configError } = await supabase
-      .from('whatsapp_config')
-      .select('*')
-      .eq('account_id', accountId)
-      .single()
+    let config;
+    try {
+      const res = await db
+        .select()
+        .from(whatsapp_config)
+        .where(eq(whatsapp_config.account_id, accountId))
+        .limit(1);
+      config = res[0];
+    } catch (configError) {
+      config = null;
+    }
 
-    if (configError || !config) {
+    if (!config) {
       return NextResponse.json(
         {
           error:
@@ -308,15 +314,21 @@ export async function POST() {
         updated_at: new Date().toISOString(),
       }
 
-      const { data: existing, error: lookupErr } = await supabase
-        .from('message_templates')
-        .select('id')
-        .eq('account_id', accountId)
-        .eq('name', t.name)
-        .eq('language', t.language)
-        .maybeSingle()
-
-      if (lookupErr) {
+      let existing;
+      try {
+        const res = await db
+          .select({ id: message_templates.id })
+          .from(message_templates)
+          .where(
+            and(
+              eq(message_templates.account_id, accountId),
+              eq(message_templates.name, t.name),
+              eq(message_templates.language, t.language)
+            )
+          )
+          .limit(1);
+        existing = res[0];
+      } catch (lookupErr: any) {
         errors.push({
           name: t.name,
           language: t.language,
@@ -326,31 +338,37 @@ export async function POST() {
       }
 
       if (existing?.id) {
-        const { error: updErr } = await supabase
-          .from('message_templates')
-          .update(row)
-          .eq('id', existing.id)
-        if (updErr) {
+        try {
+          await db
+            .update(message_templates)
+            .set({
+              ...row,
+              updated_at: new Date(row.updated_at),
+            } as any)
+            .where(eq(message_templates.id, existing.id));
+          updated++
+        } catch (updErr: any) {
           errors.push({
             name: t.name,
             language: t.language,
             message: updErr.message,
           })
-        } else {
-          updated++
         }
       } else {
-        const { error: insErr } = await supabase
-          .from('message_templates')
-          .insert(row)
-        if (insErr) {
+        try {
+          await db
+            .insert(message_templates)
+            .values({
+              ...row,
+              updated_at: new Date(row.updated_at),
+            } as any);
+          inserted++
+        } catch (insErr: any) {
           errors.push({
             name: t.name,
             language: t.language,
             message: insErr.message,
           })
-        } else {
-          inserted++
         }
       }
     }

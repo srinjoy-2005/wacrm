@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/options";
-import { createClient } from '@/lib/supabase/server'
-import { supabaseAdmin } from '@/lib/automations/admin-client'
+import { db } from '@/db'
+import { automations, automation_steps } from '@/db/schema'
+import { eq, and, asc } from 'drizzle-orm'
 
 export async function POST(
   _request: Request,
@@ -13,40 +14,59 @@ export async function POST(
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const user = session.user as any
 
-  const admin = supabaseAdmin()
-  const { data: original, error: origErr } = await admin
-    .from('automations')
-    .select('*')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .maybeSingle()
-  if (origErr) return NextResponse.json({ error: origErr.message }, { status: 500 })
+  let original;
+  try {
+    const res = await db
+      .select()
+      .from(automations)
+      .where(and(eq(automations.id, id), eq(automations.user_id, user.id)))
+      .limit(1);
+    original = res[0];
+  } catch (origErr: any) {
+    return NextResponse.json({ error: origErr.message }, { status: 500 })
+  }
   if (!original) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const { data: copy, error: copyErr } = await admin
-    .from('automations')
-    .insert({
-      // Clone into the same account as the original. account_id is NOT
-      // NULL post-017, so the INSERT fails the constraint without it.
-      account_id: original.account_id,
-      user_id: user.id,
-      name: `${original.name} (Copy)`,
-      description: original.description,
-      trigger_type: original.trigger_type,
-      trigger_config: original.trigger_config,
-      is_active: false,
-    })
-    .select()
-    .single()
-  if (copyErr || !copy) {
+  let copy;
+  try {
+    const res = await db
+      .insert(automations)
+      .values({
+        account_id: original.account_id,
+        user_id: user.id,
+        name: `${original.name} (Copy)`,
+        description: original.description,
+        trigger_type: original.trigger_type,
+        trigger_config: original.trigger_config,
+        is_active: false,
+      } as any)
+      .returning();
+    copy = res[0];
+  } catch (copyErr: any) {
     return NextResponse.json({ error: copyErr?.message ?? 'copy failed' }, { status: 500 })
   }
 
-  const { data: steps } = await admin
-    .from('automation_steps')
-    .select('id, parent_step_id, branch, step_type, step_config, position')
-    .eq('automation_id', id)
-    .order('position', { ascending: true })
+  if (!copy) {
+    return NextResponse.json({ error: 'copy failed' }, { status: 500 })
+  }
+
+  let steps: any[] = [];
+  try {
+    steps = await db
+      .select({
+        id: automation_steps.id,
+        parent_step_id: automation_steps.parent_step_id,
+        branch: automation_steps.branch,
+        step_type: automation_steps.step_type,
+        step_config: automation_steps.step_config,
+        position: automation_steps.position,
+      })
+      .from(automation_steps)
+      .where(eq(automation_steps.automation_id, id))
+      .orderBy(asc(automation_steps.position));
+  } catch (err) {
+    steps = [];
+  }
 
   if (steps && steps.length > 0) {
     // Re-map parent_step_id: build old→new id map first so the second
@@ -67,8 +87,11 @@ export async function POST(
       step_config: row.step_config,
       position: row.position,
     }))
-    const { error: insErr } = await admin.from('automation_steps').insert(rows)
-    if (insErr) return NextResponse.json({ error: insErr.message }, { status: 500 })
+    try {
+      await db.insert(automation_steps).values(rows as any)
+    } catch (insErr: any) {
+      return NextResponse.json({ error: insErr.message }, { status: 500 })
+    }
   }
 
   return NextResponse.json({ automation: copy }, { status: 201 })

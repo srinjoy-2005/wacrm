@@ -1,0 +1,36 @@
+src/app/api/account/api-keys/[id]/route.ts(43,39): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/account/api-keys/route.ts(51,39): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/account/api-keys/route.ts(126,39): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/account/invitations/[id]/route.ts(46,40): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/account/invitations/route.ts(143,39): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/account/invitations/route.ts(219,39): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/account/members/[userId]/route.ts(84,33): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/account/members/[userId]/route.ts(112,39): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/account/route.ts(31,20): error TS2551: Property 'account' does not exist on type 'AccountContext'. Did you mean 'accountId'?
+src/app/api/account/transfer-ownership/route.ts(84,33): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/ai/config/route.ts(26,13): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/ai/config/route.ts(72,13): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/ai/config/route.ts(237,13): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/ai/draft/route.ts(23,13): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/ai/knowledge/[id]/route.ts(19,13): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/ai/knowledge/[id]/route.ts(44,13): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/ai/knowledge/[id]/route.ts(117,13): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/ai/knowledge/reindex/route.ts(18,13): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/ai/knowledge/route.ts(19,13): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/ai/knowledge/route.ts(46,13): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/ai/playground/route.ts(26,13): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/ai/test/route.ts(19,13): error TS2339: Property 'supabase' does not exist on type 'AccountContext'.
+src/app/api/v1/broadcasts/[id]/route.ts(22,39): error TS2339: Property 'supabase' does not exist on type 'ApiKeyContext'.
+src/app/api/v1/broadcasts/route.ts(62,54): error TS2339: Property 'supabase' does not exist on type 'ApiKeyContext'.
+src/app/api/v1/broadcasts/route.ts(64,44): error TS2339: Property 'supabase' does not exist on type 'ApiKeyContext'.
+src/app/api/v1/broadcasts/route.ts(80,38): error TS2339: Property 'supabase' does not exist on type 'ApiKeyContext'.
+src/app/api/v1/conversations/[id]/messages/route.ts(29,38): error TS2339: Property 'supabase' does not exist on type 'ApiKeyContext'.
+src/app/api/v1/conversations/[id]/messages/route.ts(37,21): error TS2339: Property 'supabase' does not exist on type 'ApiKeyContext'.
+src/app/api/v1/conversations/[id]/route.ts(23,39): error TS2339: Property 'supabase' does not exist on type 'ApiKeyContext'.
+src/app/api/v1/webhooks/[id]/route.ts(27,39): error TS2339: Property 'supabase' does not exist on type 'ApiKeyContext'.
+src/app/api/v1/webhooks/[id]/route.ts(100,39): error TS2339: Property 'supabase' does not exist on type 'ApiKeyContext'.
+src/app/api/v1/webhooks/[id]/route.ts(128,39): error TS2339: Property 'supabase' does not exist on type 'ApiKeyContext'.
+src/app/api/v1/webhooks/route.ts(25,39): error TS2339: Property 'supabase' does not exist on type 'ApiKeyContext'.
+src/app/api/v1/webhooks/route.ts(39,25): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/app/api/v1/webhooks/route.ts(77,48): error TS2339: Property 'supabase' does not exist on type 'ApiKeyContext'.
+src/middleware.test.ts(39,9): error TS2339: Property 'middleware' does not exist on type 'typeof import("/home/iamsrinjoy/random_stuff/wacrm/src/middleware")'.

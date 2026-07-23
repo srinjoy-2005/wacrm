@@ -1,0 +1,200 @@
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /api/auth/session 200 in 81ms (next.js: 59ms, application-code: 22ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /notifications 200 in 703ms (next.js: 5ms, application-code: 698ms)
+  └─ ƒ fetchProfileAndAccountAction() in 679ms src/app/actions/auth.ts
+ GET /inbox 200 in 68ms (next.js: 16ms, proxy.ts: 25ms, application-code: 26ms)
+ GET /icon 200 in 18ms
+ POST /inbox 200 in 539ms (next.js: 7ms, proxy.ts: 5ms, application-code: 527ms)
+  └─ ƒ getConversationsAction() in 509ms src/app/actions/conversations.ts
+ POST /inbox 200 in 365ms (next.js: 5ms, proxy.ts: 5ms, application-code: 355ms)
+  └─ ƒ getTagsAction() in 341ms src/app/actions/contacts.ts
+ POST /inbox 200 in 374ms (next.js: 5ms, proxy.ts: 7ms, application-code: 363ms)
+  └─ ƒ checkWhatsAppConnectionAction() in 340ms src/app/actions/conversations.ts
+ POST /inbox 200 in 431ms (next.js: 7ms, proxy.ts: 42ms, application-code: 382ms)
+  └─ ƒ getConversationsAction() in 348ms src/app/actions/conversations.ts
+ POST /inbox 200 in 429ms (next.js: 43ms, proxy.ts: 18ms, application-code: 368ms)
+  └─ ƒ getTagsAction() in 346ms src/app/actions/contacts.ts
+ POST /inbox 200 in 381ms (next.js: 3ms, proxy.ts: 6ms, application-code: 372ms)
+  └─ ƒ checkWhatsAppConnectionAction() in 358ms src/app/actions/conversations.ts
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 11ms (next.js: 4ms, application-code: 7ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 980ms (next.js: 4ms, application-code: 977ms)
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ GET /inbox?c=bf7e5506-2cdc-41be-8ba4-17ddc901bab4 200 in 166ms (next.js: 25ms, proxy.ts: 66ms, application-code: 75ms)
+ POST /inbox?c=bf7e5506-2cdc-41be-8ba4-17ddc901bab4 200 in 819ms (next.js: 33ms, proxy.ts: 38ms, application-code: 748ms)
+  └─ ƒ getMessagesAction("bf7e5506-2cdc-41be-8ba4-17ddc901bab4") in 719ms src/app/actions/messages.ts
+ GET /icon 200 in 9ms
+ GET /inbox?c=0f5ad224-6b36-4260-999a-8ea2f9bfb3f1 200 in 78ms (next.js: 10ms, proxy.ts: 6ms, application-code: 63ms)
+ POST /inbox?c=0f5ad224-6b36-4260-999a-8ea2f9bfb3f1 200 in 773ms (next.js: 6ms, proxy.ts: 64ms, application-code: 704ms)
+  └─ ƒ getMessagesAction("0f5ad224-6b36-4260-999a-8ea2f9bfb3f1") in 671ms src/app/actions/messages.ts
+ GET /icon 200 in 11ms
+ GET /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 64ms (next.js: 12ms, proxy.ts: 25ms, application-code: 28ms)
+ POST /inbox?c=0f5ad224-6b36-4260-999a-8ea2f9bfb3f1 200 in 768ms (next.js: 7ms, proxy.ts: 43ms, application-code: 719ms)
+  └─ ƒ getMessagesAction("0f5ad224-6b36-4260-999a-8ea2f9bfb3f1") in 699ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 709ms (next.js: 7ms, proxy.ts: 10ms, application-code: 691ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 678ms src/app/actions/messages.ts
+ GET /icon 200 in 39ms
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 721ms (next.js: 10ms, proxy.ts: 21ms, application-code: 689ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 672ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 712ms (next.js: 4ms, proxy.ts: 18ms, application-code: 690ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 677ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 741ms (next.js: 7ms, proxy.ts: 17ms, application-code: 717ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 688ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 740ms (next.js: 18ms, proxy.ts: 21ms, application-code: 701ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 689ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 725ms (next.js: 6ms, proxy.ts: 17ms, application-code: 703ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 688ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 734ms (next.js: 14ms, proxy.ts: 19ms, application-code: 702ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 675ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 731ms (next.js: 11ms, proxy.ts: 10ms, application-code: 710ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 700ms src/app/actions/messages.ts
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 739ms (next.js: 9ms, proxy.ts: 14ms, application-code: 716ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 688ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 742ms (next.js: 7ms, proxy.ts: 20ms, application-code: 715ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 692ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 733ms (next.js: 18ms, proxy.ts: 18ms, application-code: 697ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 679ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 741ms (next.js: 6ms, proxy.ts: 12ms, application-code: 723ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 708ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 752ms (next.js: 7ms, proxy.ts: 12ms, application-code: 733ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 695ms src/app/actions/messages.ts
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 10ms (next.js: 4ms, application-code: 6ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 760ms (next.js: 5ms, application-code: 755ms)
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 730ms (next.js: 6ms, proxy.ts: 21ms, application-code: 703ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 673ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 729ms (next.js: 9ms, proxy.ts: 13ms, application-code: 707ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 685ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 716ms (next.js: 7ms, proxy.ts: 13ms, application-code: 695ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 678ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 720ms (next.js: 7ms, proxy.ts: 14ms, application-code: 699ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 682ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 719ms (next.js: 6ms, proxy.ts: 17ms, application-code: 696ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 678ms src/app/actions/messages.ts
+[browser] [PresenceHeartbeat] touch_presence failed: Unauthorized 
+    at PresenceHeartbeat.useEffect.beat (src/components/presence/presence-heartbeat.tsx:65:17)
+  63 |         // Non-fatal: presence is best-effort. Log once per failure so a
+  64 |         // misconfigured RPC is visible without spamming.
+> 65 |         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);
+     |                 ^
+  66 |       }
+  67 |     };
+  68 | (src/components/presence/presence-heartbeat.tsx:65:17)
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 719ms (next.js: 7ms, proxy.ts: 12ms, application-code: 700ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 685ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 735ms (next.js: 6ms, proxy.ts: 14ms, application-code: 715ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 681ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 746ms (next.js: 6ms, proxy.ts: 13ms, application-code: 727ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 699ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 729ms (next.js: 6ms, proxy.ts: 24ms, application-code: 699ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 682ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 747ms (next.js: 6ms, proxy.ts: 13ms, application-code: 728ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 701ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 717ms (next.js: 7ms, proxy.ts: 13ms, application-code: 698ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 679ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 712ms (next.js: 6ms, proxy.ts: 16ms, application-code: 690ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 676ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 716ms (next.js: 5ms, proxy.ts: 24ms, application-code: 688ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 676ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 719ms (next.js: 15ms, proxy.ts: 5ms, application-code: 699ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 690ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 709ms (next.js: 5ms, proxy.ts: 6ms, application-code: 698ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 681ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 738ms (next.js: 4ms, proxy.ts: 22ms, application-code: 711ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 685ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 711ms (next.js: 4ms, proxy.ts: 11ms, application-code: 695ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 683ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 733ms (next.js: 7ms, proxy.ts: 11ms, application-code: 715ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 680ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 705ms (next.js: 4ms, proxy.ts: 17ms, application-code: 684ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 671ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 740ms (next.js: 6ms, proxy.ts: 33ms, application-code: 702ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 682ms src/app/actions/messages.ts
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 20ms (next.js: 14ms, application-code: 7ms)
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1476ms (next.js: 9ms, application-code: 1466ms)
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 736ms (next.js: 11ms, proxy.ts: 16ms, application-code: 709ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 692ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 720ms (next.js: 5ms, proxy.ts: 7ms, application-code: 708ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 679ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 749ms (next.js: 24ms, proxy.ts: 22ms, application-code: 703ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 673ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 720ms (next.js: 7ms, proxy.ts: 23ms, application-code: 689ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 679ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 719ms (next.js: 4ms, proxy.ts: 17ms, application-code: 698ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 687ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 734ms (next.js: 5ms, proxy.ts: 12ms, application-code: 718ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 680ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 759ms (next.js: 10ms, proxy.ts: 15ms, application-code: 734ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 707ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 740ms (next.js: 6ms, proxy.ts: 13ms, application-code: 721ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 705ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 860ms (next.js: 55ms, proxy.ts: 25ms, application-code: 780ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 729ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 766ms (next.js: 8ms, proxy.ts: 23ms, application-code: 735ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 708ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 746ms (next.js: 6ms, proxy.ts: 19ms, application-code: 721ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 697ms src/app/actions/messages.ts
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 752ms (next.js: 12ms, proxy.ts: 19ms, application-code: 721ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 700ms src/app/actions/messages.ts
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 6ms (next.js: 3ms, application-code: 4ms)
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 739ms (next.js: 12ms, proxy.ts: 20ms, application-code: 707ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 688ms src/app/actions/messages.ts
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 910ms (next.js: 5ms, application-code: 905ms)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 7ms (next.js: 3ms, application-code: 3ms)
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 714ms (next.js: 6ms, proxy.ts: 8ms, application-code: 700ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 676ms src/app/actions/messages.ts
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 941ms (next.js: 4ms, application-code: 937ms)
+ OPTIONS /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 204 in 20ms (next.js: 10ms, application-code: 10ms)
+ POST /inbox?c=22e4aa18-e4c5-44c9-a57a-d334cafdfc35 200 in 731ms (next.js: 5ms, proxy.ts: 22ms, application-code: 704ms)
+  └─ ƒ getMessagesAction("22e4aa18-e4c5-44c9-a57a-d334cafdfc35") in 679ms src/app/actions/messages.ts
+ GET /api/v1/messages?conversation_id=fc335bff-d0c7-4edf-8038-45ede0291df8 200 in 1117ms (next.js: 6ms, application-code: 1110ms)

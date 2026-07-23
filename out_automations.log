@@ -1,0 +1,8 @@
+◇ injected env (10) from .env.local // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Result(1) [
+  {
+    id: '541d7875-5bfd-4c9c-9a0b-4b7eb3481963',
+    trigger_type: 'new_message_received',
+    is_active: true
+  }
+]

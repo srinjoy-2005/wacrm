@@ -1,4 +1,6 @@
-import { supabaseAdmin } from './admin-client'
+import { db } from '@/db'
+import { automation_steps } from '@/db/schema'
+import { eq, asc } from 'drizzle-orm'
 
 // ------------------------------------------------------------
 // Builder payload → flat rows for automation_steps.
@@ -37,13 +39,12 @@ export async function replaceSteps(
   automationId: string,
   input: BuilderStepInput[],
 ): Promise<string | null> {
-  const admin = supabaseAdmin()
-  const { error: delErr } = await admin
-    .from('automation_steps')
-    .delete()
-    .eq('automation_id', automationId)
-  if (delErr) return delErr.message
-  return insertSteps(automationId, input)
+  try {
+    await db.delete(automation_steps).where(eq(automation_steps.automation_id, automationId))
+    return insertSteps(automationId, input)
+  } catch (delErr: any) {
+    return delErr.message
+  }
 }
 
 export async function insertSteps(
@@ -83,8 +84,12 @@ export async function insertSteps(
   walk(tree, null, null)
 
   if (rows.length === 0) return null
-  const { error } = await supabaseAdmin().from('automation_steps').insert(rows)
-  return error?.message ?? null
+  try {
+    await db.insert(automation_steps).values(rows as any)
+    return null
+  } catch (error: any) {
+    return error.message ?? null
+  }
 }
 
 function seedsToTree(seeds: BuilderStepInput[]): BuilderStepInput[] {
@@ -126,14 +131,11 @@ interface DbStep {
 }
 
 export async function loadStepsTree(automationId: string): Promise<BuilderStepNode[]> {
-  const { data, error } = await supabaseAdmin()
-    .from('automation_steps')
-    .select('*')
-    .eq('automation_id', automationId)
-    .order('position', { ascending: true })
-
-  if (error) throw new Error(error.message)
-  const rows = (data ?? []) as DbStep[]
+  const rows = await db
+    .select()
+    .from(automation_steps)
+    .where(eq(automation_steps.automation_id, automationId))
+    .orderBy(asc(automation_steps.position)) as unknown as DbStep[]
 
   const byId = new Map<string, BuilderStepNode>()
   for (const row of rows) {

@@ -153,3 +153,83 @@ export const broadcast_recipients = pgTable('broadcast_recipients', {
   whatsapp_message_id: text('whatsapp_message_id'),
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
+
+// ============================================================
+// Phase 2: Automations & Templates Schema
+// ============================================================
+
+export const message_templates = pgTable('message_templates', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  account_id: uuid('account_id').notNull().references(() => accounts.id, { onDelete: 'cascade' }),
+  user_id: uuid('user_id').notNull(),
+  name: text('name').notNull(),
+  category: text('category').notNull(),
+  language: text('language').notNull(),
+  header_type: text('header_type'),
+  header_content: text('header_content'),
+  header_handle: text('header_handle'),
+  body_text: text('body_text').notNull(),
+  footer_text: text('footer_text'),
+  buttons: jsonb('buttons'),
+  sample_values: jsonb('sample_values'),
+  status: text('status').notNull(),
+  meta_template_id: text('meta_template_id'),
+  quality_score: text('quality_score'),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const automations = pgTable('automations', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  account_id: uuid('account_id').notNull().references(() => accounts.id, { onDelete: 'cascade' }),
+  user_id: uuid('user_id').notNull(),
+  name: text('name').notNull(),
+  description: text('description'),
+  trigger_type: text('trigger_type').notNull(),
+  trigger_config: jsonb('trigger_config').default({}).notNull(),
+  is_active: boolean('is_active').default(false).notNull(),
+  execution_count: integer('execution_count').default(0).notNull(),
+  last_executed_at: timestamp('last_executed_at', { withTimezone: true }),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const automation_steps = pgTable('automation_steps', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  automation_id: uuid('automation_id').notNull().references(() => automations.id, { onDelete: 'cascade' }),
+  parent_step_id: uuid('parent_step_id'),
+  branch: text('branch'),
+  step_type: text('step_type').notNull(),
+  step_config: jsonb('step_config').default({}).notNull(),
+  position: integer('position').notNull(),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const automation_logs = pgTable('automation_logs', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  automation_id: uuid('automation_id').notNull().references(() => automations.id, { onDelete: 'cascade' }),
+  account_id: uuid('account_id').notNull().references(() => accounts.id, { onDelete: 'cascade' }),
+  user_id: uuid('user_id').notNull(),
+  contact_id: uuid('contact_id').references(() => contacts.id, { onDelete: 'set null' }),
+  trigger_event: text('trigger_event').notNull(),
+  steps_executed: jsonb('steps_executed').default([]).notNull(),
+  status: text('status').notNull(),
+  error_message: text('error_message'),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const automation_pending_executions = pgTable('automation_pending_executions', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  automation_id: uuid('automation_id').notNull().references(() => automations.id, { onDelete: 'cascade' }),
+  account_id: uuid('account_id').notNull().references(() => accounts.id, { onDelete: 'cascade' }),
+  user_id: uuid('user_id').notNull(),
+  contact_id: uuid('contact_id').references(() => contacts.id, { onDelete: 'cascade' }),
+  log_id: uuid('log_id').references(() => automation_logs.id, { onDelete: 'cascade' }),
+  parent_step_id: uuid('parent_step_id'),
+  branch: text('branch'),
+  next_step_position: integer('next_step_position').notNull(),
+  context: jsonb('context').default({}).notNull(),
+  run_at: timestamp('run_at', { withTimezone: true }).notNull(),
+  status: text('status').default('pending').notNull(),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});
